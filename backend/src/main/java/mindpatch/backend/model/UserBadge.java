@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,15 +24,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserBadge {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@EmbeddedId
+	private UserBadgeId id;
 	
 	@ManyToOne
 	@MapsId("userId")
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@ManyToOne
 	@MapsId("badgeId")
 	@JoinColumn(name = "badge_id")

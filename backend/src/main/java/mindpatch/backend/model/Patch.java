@@ -51,8 +51,8 @@ public class Patch {
 	@ManyToMany
 	@JoinTable(
 	name = "patch_tags",
-	joinColumns = @JoinColumn(referencedColumnName = "patch_id"),
-	inverseJoinColumns = @JoinColumn(referencedColumnName = "tag_id")
+	joinColumns = @JoinColumn(name = "patch_id"),
+	inverseJoinColumns = @JoinColumn(name = "tag_id")
 	)
 	private Set<Tag> tags;
 	

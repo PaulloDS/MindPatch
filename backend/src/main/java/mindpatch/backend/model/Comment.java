@@ -22,23 +22,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@ManyToOne
-	@JoinColumn(name = "patch_id", nullable = false)
-	private Patch patch;
-	
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
-	
-	@Column(columnDefinition = "TEXT", nullable = false)
-	private String texto;
-	
-	@CreationTimestamp
-	private LocalDateTime criadoEm;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // <- Corrigido aqui
+
+    @ManyToOne
+    @JoinColumn(name = "patch_id", nullable = false)
+    private Patch patch;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String texto;
+
+    @CreationTimestamp
+    private LocalDateTime criadoEm;
 }
+
