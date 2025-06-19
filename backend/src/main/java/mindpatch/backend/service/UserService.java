@@ -12,6 +12,7 @@ import mindpatch.backend.config.SecurityConfiguration;
 import mindpatch.backend.dto.CreateUserDTO;
 import mindpatch.backend.dto.LoginUserDTO;
 import mindpatch.backend.dto.RecoveryJwtTokenDTO;
+import mindpatch.backend.dto.UserProfileDTO;
 import mindpatch.backend.model.Role;
 import mindpatch.backend.model.User;
 import mindpatch.backend.repository.UserRepository;
@@ -63,6 +64,14 @@ public class UserService {
 
         // Salva o novo usuário no banco de dados
         userRepository.save(newUser);
+    }
+
+    public UserProfileDTO getUserProfileById(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+
+        // Converter User para DTO, incluindo patches e badges
+        return UserProfileDTO.fromEntity(user);
     }
 
 }
