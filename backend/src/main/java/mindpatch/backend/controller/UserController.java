@@ -3,9 +3,13 @@ package mindpatch.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +18,8 @@ import mindpatch.backend.dto.CreateUserDTO;
 import mindpatch.backend.dto.LoginUserDTO;
 import mindpatch.backend.dto.RecoveryJwtTokenDTO;
 import mindpatch.backend.dto.UserProfileDTO;
+import mindpatch.backend.dto.UserUpdateDTO;
+import mindpatch.backend.model.User;
 import mindpatch.backend.service.UserService;
 
 @RestController
@@ -35,12 +41,58 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    // Rota para recuperar os dados do próprio perfil
+    // Somente ADMIN pode recuperar dados de qualquer usuário
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id) {
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id, Authentication authentication) {
+
+        String email = authentication.getName();
+        User logado = userService.findByEmail(email);
+
+        boolean isAdmin = logado.getRoles().stream()
+            .anyMatch(role -> role.getName().name().equals("ROLE_ADMIN"));
+
+        boolean isOwner = logado.getId().equals(id);
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Acesso negado!");
+        }
+
         UserProfileDTO dto = userService.getUserProfileById(id);
         return ResponseEntity.ok(dto);
     }
 
+    // Rota para atualizar os dados do próprio perfil
+    // Somente ADMIN pode atualizar os dados de qualquer usuário
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserUpdateDTO> updateUserProfile(@PathVariable Long id, @RequestBody UserUpdateDTO userUpdateDTO, Authentication authentication ) {
+
+        String emailLogado = authentication.getName();
+        User logado = userService.findByEmail(emailLogado);
+
+        boolean isAdmin = logado.getRoles().stream()
+                    .anyMatch(role -> role.getName().name().equals("ROLE_ADMIN"));
+        
+        boolean isEditingSelf = logado.getId().equals(id);
+
+        if (!isEditingSelf && !isAdmin) {
+            throw new RuntimeException("PÁ! Acesso negado.");
+        }
+
+        UserUpdateDTO userProfileAtualizado = userService.atualizarUsuario(id, userUpdateDTO);
+        return ResponseEntity.ok(userProfileAtualizado);
+    }
+
+    // Rota para deletar usuários
+    // Somente ADMIN pode deletar
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deletarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /* 
     @GetMapping("/test/customer")
     public ResponseEntity<String> getCustomerAuthenticationTest() {
         return new ResponseEntity<>("Cliente autenticado com sucesso!", HttpStatus.OK);
@@ -50,5 +102,6 @@ public class UserController {
     public ResponseEntity<String> getAdminAuthenticationTest() {
         return new ResponseEntity<>("Administrador autenticado com sucesso!", HttpStatus.OK);
     }
+    */
 
 }

@@ -1,14 +1,16 @@
 package mindpatch.backend.dto;
 
 import lombok.Getter;
-import mindpatch.backend.model.RoleName;
+import lombok.Setter;
 
 @Getter
-public class CreateUserDTO {
+@Setter
+public class UserUpdateDTO {
 
     private String nome;
+
     private String email;
+
     private String password;
-    private RoleName role;
 
 }
