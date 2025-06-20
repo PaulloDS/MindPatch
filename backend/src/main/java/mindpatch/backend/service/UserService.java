@@ -1,6 +1,7 @@
 package mindpatch.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import mindpatch.backend.config.SecurityConfiguration;
+import mindpatch.backend.dto.BadgeDTO;
 import mindpatch.backend.dto.CreateUserDTO;
 import mindpatch.backend.dto.LoginUserDTO;
+import mindpatch.backend.dto.PatchDTO;
 import mindpatch.backend.dto.RecoveryJwtTokenDTO;
 import mindpatch.backend.dto.UserProfileDTO;
 import mindpatch.backend.dto.UserUpdateDTO;
+import mindpatch.backend.model.Badge;
+import mindpatch.backend.model.Patch;
 import mindpatch.backend.model.Role;
 import mindpatch.backend.model.RoleName;
 import mindpatch.backend.model.User;
@@ -131,9 +136,38 @@ public class UserService {
 
     // Método para deletar usuário
     public void deletarUsuario(Long id) {
-
         User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         userRepository.delete(user);
+    }
+
+    // Método para listar conquistas
+    public List<BadgeDTO> listarConquistas(Long userId) {
+        User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        
+        return user.getConquistas().stream()
+                    .map(userBadge -> {
+                        Badge badge = userBadge.getBadge();
+                        return BadgeDTO.builder()
+                        .id(badge.getId())
+                        .nome(badge.getNome())
+                        .descricao(badge.getDescricao())
+                        .iconeURL(badge.getIconeURL())
+                        .build();
+                    })
+                    .collect(Collectors.toList());
+        
+    }
+
+        // Método para listar conquistas
+    public List<PatchDTO> listarPatches(Long userId) {
+
+        User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        
+        return user.getPatches().stream()
+            .map(PatchDTO::fromEntity)
+            .collect(Collectors.toList());
     }
 }

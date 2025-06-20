@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +15,10 @@ import mindpatch.backend.model.Patch;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PatchDTO {
 
+    private Long id;
     private String titulo;
     private String descricao;
     private String codigo;
@@ -27,6 +30,7 @@ public class PatchDTO {
 
     public static PatchDTO fromEntity(Patch patch) {
         PatchDTO dto = new PatchDTO();
+        dto.setId(patch.getId());
         dto.setTitulo(patch.getTitulo());
         dto.setDescricao(patch.getDescricao());
         dto.setCodigo(patch.getCodigo());

@@ -1,5 +1,7 @@
 package mindpatch.backend.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import mindpatch.backend.dto.BadgeDTO;
 import mindpatch.backend.dto.CreateUserDTO;
 import mindpatch.backend.dto.LoginUserDTO;
+import mindpatch.backend.dto.PatchDTO;
 import mindpatch.backend.dto.RecoveryJwtTokenDTO;
 import mindpatch.backend.dto.UserProfileDTO;
 import mindpatch.backend.dto.UserUpdateDTO;
 import mindpatch.backend.model.User;
+import mindpatch.backend.repository.UserRepository;
 import mindpatch.backend.service.UserService;
 
 @RestController
@@ -28,6 +33,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<RecoveryJwtTokenDTO> authenticateUser(@RequestBody LoginUserDTO loginUserDTO) {
@@ -92,16 +100,53 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    /* 
-    @GetMapping("/test/customer")
-    public ResponseEntity<String> getCustomerAuthenticationTest() {
-        return new ResponseEntity<>("Cliente autenticado com sucesso!", HttpStatus.OK);
+    // Rota para listar todos os usuários
+    // Somente ADMIN tem esse poder
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    @GetMapping("/test/admin")
-    public ResponseEntity<String> getAdminAuthenticationTest() {
-        return new ResponseEntity<>("Administrador autenticado com sucesso!", HttpStatus.OK);
+    // Rota para listar as conquistas do próprio usuário
+    // Somente ADMIN pode listar as conquistas de qualquer usuário
+    @GetMapping("/users/{id}/conquistas")
+    public ResponseEntity<List<BadgeDTO>> listarConsquistas(@PathVariable Long id, Authentication authentication ) {
+
+        String email = authentication.getName();
+        User logado = userService.findByEmail(email);
+
+        boolean isAdmin = logado.getRoles().stream()
+            .anyMatch(role -> role.getName().name().equals("ROLE_ADMIN"));
+
+        boolean isOwner = logado.getId().equals(id);
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Acesso negado!");
+        }
+
+        List<BadgeDTO> conquistas = userService.listarConquistas(id);
+        return ResponseEntity.ok(conquistas);
     }
-    */
+
+        // Rota para listar as conquistas do próprio usuário
+    // Somente ADMIN pode listar as conquistas de qualquer usuário
+    @GetMapping("/users/{id}/patches")
+    public ResponseEntity<List<PatchDTO>> listarPatches(@PathVariable Long id, Authentication authentication ) {
+
+        String email = authentication.getName();
+        User logado = userService.findByEmail(email);
+
+        boolean isAdmin = logado.getRoles().stream()
+            .anyMatch(role -> role.getName().name().equals("ROLE_ADMIN"));
+
+        boolean isOwner = logado.getId().equals(id);
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("Acesso negado!");
+        }
+
+        List<PatchDTO> patches = userService.listarPatches(id);
+        return ResponseEntity.ok(patches);
+    }
 
 }
