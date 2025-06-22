@@ -40,6 +40,14 @@ public class PatchController {
         return ResponseEntity.ok(patchService.listarMeusPatches(email));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PatchDTO> getPatchById(@PathVariable Long id, Authentication authentication) {
+        String emailUsuario = authentication.getName();
+
+        PatchDTO patchDTO = patchService.buscarPorId(id, emailUsuario);
+        return ResponseEntity.ok(patchDTO);
+    }
+
     @GetMapping("/todos")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<PatchDTO>> listarTodos(Authentication authentication) {

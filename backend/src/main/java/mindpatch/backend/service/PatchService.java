@@ -53,6 +53,25 @@ public class PatchService {
                 .collect(Collectors.toList());
     }
 
+    public PatchDTO buscarPorId(Long id, String emailUsuario) {
+        User user = userService.findByEmail(emailUsuario);
+
+        boolean isAdmin = user.getRoles().stream()
+                    .anyMatch(role -> role.getName() == RoleName.ROLE_ADMIN);
+
+        Patch patch = patchRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Patch não encontrado!"));
+        
+        boolean isAutor = patch.getAutor() != null && patch.getAutor().getEmail().equals(emailUsuario);
+        boolean isPublico = patch.getVisibilidade() == Visibilidade.PUBLICO;
+
+        if (!isAdmin && !isPublico && !isAutor) {
+            throw new AccessDeniedException("Sem permissão!");
+        }
+
+        return PatchDTO.fromEntity(patch);
+    }
+
     public List<PatchDTO> listarTodos(String emailUsuario) {
         User user = userService.findByEmail(emailUsuario);
 
