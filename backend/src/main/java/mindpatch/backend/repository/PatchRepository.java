@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import mindpatch.backend.model.Patch;
+import mindpatch.backend.model.Tag;
 import mindpatch.backend.model.Visibilidade;
 
 @Repository
@@ -15,5 +16,7 @@ public interface PatchRepository extends JpaRepository<Patch, Long>, JpaSpecific
     List<Patch> findByVisibilidade(Visibilidade visibilidade);
 
     List<Patch> findByAutorId(Long userId);
+
+    List<Patch> findByTagsContains(Tag tag);
 
 }

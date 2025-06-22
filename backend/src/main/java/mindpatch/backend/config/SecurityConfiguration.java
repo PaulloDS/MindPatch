@@ -38,7 +38,8 @@ public class SecurityConfiguration {
         "/patches/meus",
         "/patches/search",
         "/patches/{id}",
-        "/tags"
+        "/tags",
+        "/tags/{id}"
     };
 
     // Endpoints que só podem ser acessados por usuários com permissão de administrador

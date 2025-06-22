@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import mindpatch.backend.dto.TagCreateDTO;
 import mindpatch.backend.dto.TagDTO;
+import mindpatch.backend.model.Patch;
 import mindpatch.backend.model.Tag;
+import mindpatch.backend.repository.PatchRepository;
 import mindpatch.backend.repository.TagRepository;
 
 @Service
@@ -18,6 +20,8 @@ import mindpatch.backend.repository.TagRepository;
 public class TagService {
 
     private final TagRepository tagRepository;
+
+    private final PatchRepository patchRepository;
 
     public TagDTO criar(TagCreateDTO dto) {
         if (tagRepository.existsByNomeIgnoreCase(dto.getNome())) {
@@ -37,6 +41,30 @@ public class TagService {
 
     public Set<Tag> getTagsByIds(List<Long> tagIds) {
         return new HashSet<>(tagRepository.findAllById(tagIds));
+    }
+
+    public TagDTO atualizar(Long id, TagCreateDTO dto) {
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tag não encontrada!"));
+
+        tag.setNome(dto.getNome());
+        tag = tagRepository.save(tag);
+
+        return TagDTO.fromEntity(tag);
+    }
+
+    public void deletar(Long id) {
+        Tag tag = tagRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Tag não encontrada!"));
+
+        List<Patch> patchesComTag = patchRepository.findByTagsContains(tag);
+        for (Patch patch : patchesComTag) {
+            patch.getTags().remove(tag);
+        }
+
+        patchRepository.saveAll(patchesComTag);
+
+        tagRepository.delete(tag);
     }
 
 }
