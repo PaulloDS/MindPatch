@@ -11,24 +11,28 @@ import mindpatch.backend.model.Visibilidade;
 
 public class PatchSpecifications {
 
-    public static Specification<Patch> comFiltros(String titulo, String codigo, String autor, boolean isAdmin) {
+    public static Specification<Patch> comFiltros(String titulo, String codigo, String autor, boolean isAdmin, String emailUsuario) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!isAdmin) {
-                predicates.add(cb.equal(root.get("visibilidade"), Visibilidade.PUBLICO));
+                // Visibilidade publica OU autor do patch (comparar email)
+                Predicate publico = cb.equal(root.get("visibilidade"), Visibilidade.PUBLICO);
+                Predicate autorDoPatch = cb.equal(root.get("autor").get("email"), emailUsuario);
+                predicates.add(cb.or(publico, autorDoPatch));
             }
+
 
             if (titulo != null && !titulo.isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("titulo")), "%" + titulo.toLowerCase() + "%"));
             }
 
             if (codigo != null && !codigo.isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("codigo")), "%" + titulo.toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("codigo")), "%" + codigo.toLowerCase() + "%"));
             }
 
             if (autor != null && !autor.isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("autor").get("nome")), "%" + titulo.toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("autor").get("nome")), "%" + autor.toLowerCase() + "%"));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

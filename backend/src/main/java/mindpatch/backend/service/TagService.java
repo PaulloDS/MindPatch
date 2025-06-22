@@ -1,5 +1,6 @@
 package mindpatch.backend.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,6 +33,10 @@ public class TagService {
         return tagRepository.findAll().stream()
                 .map(TagDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public Set<Tag> getTagsByIds(List<Long> tagIds) {
+        return new HashSet<>(tagRepository.findAllById(tagIds));
     }
 
 }

@@ -54,6 +54,11 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuário com email " + email + " não encontrado"));
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário com id " + id + " não encontrado"));
+    }
+
 
     // Método responsável por autenticar um usuário e retornar um token JWT
     public RecoveryJwtTokenDTO authenticateUser(LoginUserDTO loginUserDTO) {

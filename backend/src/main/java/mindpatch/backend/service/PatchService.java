@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import mindpatch.backend.dto.PatchCreateDTO;
 import mindpatch.backend.dto.PatchDTO;
 import mindpatch.backend.model.Patch;
+import mindpatch.backend.model.RoleName;
 import mindpatch.backend.model.Tag;
 import mindpatch.backend.model.User;
 import mindpatch.backend.model.Visibilidade;
@@ -32,6 +33,9 @@ public class PatchService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private TagService tagService;
 
     public List<PatchDTO> listarPublicos() {
         return patchRepository.findByVisibilidade(Visibilidade.PUBLICO)
@@ -61,9 +65,10 @@ public class PatchService {
     public List<PatchDTO> buscarPorFiltros(String titulo, String codigo, String autor, String emailUsuario) {
 
         User user = userService.findByEmail(emailUsuario);
-        boolean isAdmin = user.getRoles().equals("ROLE_ADMIN");
+        boolean isAdmin = user.getRoles().stream()
+            .anyMatch(role -> role.getName() == RoleName.ROLE_ADMIN);
 
-        Specification<Patch> spec = PatchSpecifications.comFiltros(titulo, codigo, autor, isAdmin);
+        Specification<Patch> spec = PatchSpecifications.comFiltros(titulo, codigo, autor, isAdmin, emailUsuario);
 
         return patchRepository.findAll(spec).stream()
             .map(PatchDTO::fromEntity)
@@ -90,6 +95,29 @@ public class PatchService {
         return PatchDTO.fromEntity(patch);
     }
 
+    public PatchDTO atualizar(Long id, PatchCreateDTO dto, String emailUsuario) {
+        Patch patch = patchRepository.findById(id)       
+                    .orElseThrow(() -> new RuntimeException("Patch não encontrado!"));
+
+        User usuario = userService.findByEmail(emailUsuario);
+
+        if(!patch.getAutor().getId().equals(usuario.getId())) {
+            throw new RuntimeException("Sem permissão!");
+        }
+
+        patch.setTitulo(dto.getTitulo());
+        patch.setDescricao(dto.getDescricao());
+        patch.setCodigo(dto.getCodigo());
+        patch.setAprendizado(dto.getAprendizado());
+        patch.setVisibilidade(dto.getVisibilidade());
+
+        if (dto.getTagIds() != null) {
+            patch.setTags(tagService.getTagsByIds(dto.getTagIds()));
+        }
+
+        Patch atualizado = patchRepository.save(patch);
+        return PatchDTO.fromEntity(atualizado);
+    }
 
     public void deletar(Long id, String emailUsuario) {
         Patch patch = patchRepository.findById(id)       
@@ -98,7 +126,7 @@ public class PatchService {
         User usuario = userService.findByEmail(emailUsuario);
 
         boolean isAdmin = usuario.getRoles().stream()
-            .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+            .anyMatch(role -> role.getName() == RoleName.ROLE_ADMIN);
         
         boolean isAutor = patch.getAutor().getId().equals(usuario.getId());
 
