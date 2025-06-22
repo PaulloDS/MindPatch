@@ -159,15 +159,4 @@ public class UserService {
                     .collect(Collectors.toList());
         
     }
-
-        // Método para listar conquistas
-    public List<PatchDTO> listarPatches(Long userId) {
-
-        User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        
-        return user.getPatches().stream()
-            .map(PatchDTO::fromEntity)
-            .collect(Collectors.toList());
-    }
 }

@@ -23,6 +23,7 @@ public class PatchDTO {
     private String descricao;
     private String codigo;
     private String aprendizado;
+    private AutorPatchDTO autor;
     private List<TagDTO> tags;
     private List<CommentDTO> comentarios;
     private LocalDateTime criadoEm;
@@ -35,6 +36,9 @@ public class PatchDTO {
         dto.setDescricao(patch.getDescricao());
         dto.setCodigo(patch.getCodigo());
         dto.setAprendizado(patch.getAprendizado());
+        
+
+        dto.setAutor(new AutorPatchDTO(patch.getAutor().getId(), patch.getAutor().getNome()));
 
         List<TagDTO> tagDTOs = patch.getTags().stream()
             .map(TagDTO::fromEntity)

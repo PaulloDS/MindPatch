@@ -1,0 +1,111 @@
+package mindpatch.backend.service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import mindpatch.backend.dto.PatchCreateDTO;
+import mindpatch.backend.dto.PatchDTO;
+import mindpatch.backend.model.Patch;
+import mindpatch.backend.model.Tag;
+import mindpatch.backend.model.User;
+import mindpatch.backend.model.Visibilidade;
+import mindpatch.backend.repository.PatchRepository;
+import mindpatch.backend.repository.TagRepository;
+import mindpatch.backend.utils.PatchSpecifications;
+
+@Service
+@RequiredArgsConstructor
+public class PatchService {
+
+    @Autowired
+    private PatchRepository patchRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    public List<PatchDTO> listarPublicos() {
+        return patchRepository.findByVisibilidade(Visibilidade.PUBLICO)
+                .stream()
+                .map(PatchDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<PatchDTO> listarMeusPatches(String emailUsuario) {
+        Long id = userService.findByEmail(emailUsuario).getId();
+
+        return patchRepository.findByAutorId(id)
+                .stream()
+                .map(PatchDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<PatchDTO> listarTodos(String emailUsuario) {
+        User user = userService.findByEmail(emailUsuario);
+
+        return patchRepository.findAll()
+                .stream()
+                .map(PatchDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<PatchDTO> buscarPorFiltros(String titulo, String codigo, String autor, String emailUsuario) {
+
+        User user = userService.findByEmail(emailUsuario);
+        boolean isAdmin = user.getRoles().equals("ROLE_ADMIN");
+
+        Specification<Patch> spec = PatchSpecifications.comFiltros(titulo, codigo, autor, isAdmin);
+
+        return patchRepository.findAll(spec).stream()
+            .map(PatchDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+
+    public PatchDTO criar(PatchCreateDTO dto, String emailUsuario) {
+        User autor = userService.findByEmail(emailUsuario);
+
+        Set<Tag> tagsSelecionadas = tagRepository.findAllById(dto.getTagIds()).stream().collect(Collectors.toSet());
+
+        Patch patch = Patch.builder()
+            .titulo(dto.getTitulo())
+            .descricao(dto.getDescricao())
+            .codigo(dto.getCodigo())
+            .aprendizado(dto.getAprendizado())
+            .visibilidade(dto.getVisibilidade())
+            .autor(autor)
+            .tags(tagsSelecionadas)
+            .build();
+
+        patch = patchRepository.save(patch);
+
+        return PatchDTO.fromEntity(patch);
+    }
+
+
+    public void deletar(Long id, String emailUsuario) {
+        Patch patch = patchRepository.findById(id)       
+                    .orElseThrow(() -> new RuntimeException("Patch não encontrado!"));
+                    
+        User usuario = userService.findByEmail(emailUsuario);
+
+        boolean isAdmin = usuario.getRoles().stream()
+            .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+        
+        boolean isAutor = patch.getAutor().getId().equals(usuario.getId());
+
+        if (!isAdmin && !isAutor) {
+            throw new RuntimeException("Sem permissão!");
+        }
+
+        patchRepository.delete(patch);
+    }
+}

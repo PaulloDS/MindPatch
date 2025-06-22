@@ -33,17 +33,18 @@ public class SecurityConfiguration {
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
         "/auth/users/{id}",
         "/auth/users/{id}/conquistas",
-        "/auth/users/{id}/patches"
-    };
-
-    // Endpoints que só podem ser acessados por usuários com permissão de cliente
-    public static final String[] ENDPOINTS_CUSTOMER = {
-        "/users/test/customer"
+        "/patches",
+        "/patches/publicos",
+        "/patches/meus",
+        "/patches/search",
+        "/patches/{id}",
+        "/tags"
     };
 
     // Endpoints que só podem ser acessados por usuários com permissão de administrador
     public static final String[] ENDPOINTS_ADMIN = {
-        "/auth/users"
+        "/auth/users",
+        "/patches/todos",
     };
 
     @Bean
@@ -54,7 +55,6 @@ public class SecurityConfiguration {
                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
                 .requestMatchers(ENDPOINTS_ADMIN).hasRole("ADMIN") // Repare que não é necessário colocar "ROLE" antes do nome, como fizemos na definição das roles
-                .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CUSTOMER")
                 .anyRequest().denyAll()
                 // Adiciona o filtro de autenticação de usuário que criamos, antes do filtro de segurança padrão do Spring Security
                 .and().addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -33,7 +33,7 @@ public static UserProfileDTO fromEntity(User user) {
     dto.setAtualizadoEm(user.getAtualizadoEm());
 
     List<PatchDTO> patchDTOs = user.getPatches().stream()
-        .map(p -> PatchDTO.fromEntity(p))
+        .map(PatchDTO::fromEntity)
         .collect(Collectors.toList());
     dto.setPatches(patchDTOs);
 

@@ -1,6 +1,7 @@
 package mindpatch.backend.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -103,8 +104,10 @@ public class UserController {
     // Rota para listar todos os usuários
     // Somente ADMIN tem esse poder
     @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserProfileDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+            .map(UserProfileDTO::fromEntity)
+            .collect(Collectors.toList());
     }
 
     // Rota para listar as conquistas do próprio usuário
@@ -126,27 +129,6 @@ public class UserController {
 
         List<BadgeDTO> conquistas = userService.listarConquistas(id);
         return ResponseEntity.ok(conquistas);
-    }
-
-        // Rota para listar as conquistas do próprio usuário
-    // Somente ADMIN pode listar as conquistas de qualquer usuário
-    @GetMapping("/users/{id}/patches")
-    public ResponseEntity<List<PatchDTO>> listarPatches(@PathVariable Long id, Authentication authentication ) {
-
-        String email = authentication.getName();
-        User logado = userService.findByEmail(email);
-
-        boolean isAdmin = logado.getRoles().stream()
-            .anyMatch(role -> role.getName().name().equals("ROLE_ADMIN"));
-
-        boolean isOwner = logado.getId().equals(id);
-
-        if (!isOwner && !isAdmin) {
-            throw new RuntimeException("Acesso negado!");
-        }
-
-        List<PatchDTO> patches = userService.listarPatches(id);
-        return ResponseEntity.ok(patches);
     }
 
 }
