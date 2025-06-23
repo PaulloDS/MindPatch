@@ -41,7 +41,9 @@ public class SecurityConfiguration {
         "/tags",
         "/tags/{id}",
         "/badges",
-        "/badges/{id}"
+        "/badges/{id}",
+        "/patches/{patchId}/comments",
+        "/comments/{id}"
     };
 
     // Endpoints que só podem ser acessados por usuários com permissão de administrador

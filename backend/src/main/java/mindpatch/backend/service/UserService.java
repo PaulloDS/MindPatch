@@ -164,4 +164,9 @@ public class UserService {
                     .collect(Collectors.toList());
         
     }
+
+    public User findUserByEmail(String username) {
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    }   
 }
