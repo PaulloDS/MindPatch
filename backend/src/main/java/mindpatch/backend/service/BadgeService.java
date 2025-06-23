@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import mindpatch.backend.dto.BadgeCreateDTO;
 import mindpatch.backend.dto.BadgeDTO;
 import mindpatch.backend.model.Badge;
+import mindpatch.backend.model.User;
+import mindpatch.backend.registry.BadgeRuleRegistry;
 import mindpatch.backend.repository.BadgeRepository;
 import mindpatch.backend.repository.UserRepository;
 
@@ -18,6 +20,7 @@ public class BadgeService {
 
     private final BadgeRepository badgeRepository;
     private final UserRepository userRepository;
+    private final BadgeRuleRegistry badgeRuleRegistry;
 
     public List<BadgeDTO> listarTodas() {
         return badgeRepository.findAll().stream()
@@ -56,6 +59,10 @@ public class BadgeService {
                 .orElseThrow(() -> new RuntimeException("Conquista não existente!"));
 
         badgeRepository.delete(badge);
+    }
+
+    public void atribuirBadges(User user) {
+        badgeRuleRegistry.aplicarTodas(user);
     }
 
 }

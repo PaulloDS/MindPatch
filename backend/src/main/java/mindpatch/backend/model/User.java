@@ -68,4 +68,19 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private List<UserBadge> conquistas;
 
+	public void adicionarBadge(Badge badge) {
+		// Evita duplicatas
+		boolean jaTem = this.conquistas.stream()
+			.anyMatch(ub -> ub.getUser().getId().equals(this.getId())
+						&& ub.getBadge().getId().equals(badge.getId()));
+
+		if (jaTem) return;
+
+		UserBadge userBadge = new UserBadge();
+		userBadge.setUser(this);
+		userBadge.setBadge(badge);
+
+		this.conquistas.add(userBadge);
+	}
+
 }

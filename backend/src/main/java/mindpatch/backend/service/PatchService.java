@@ -37,6 +37,9 @@ public class PatchService {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private BadgeService badgeService;
+
     public List<PatchDTO> listarPublicos() {
         return patchRepository.findByVisibilidade(Visibilidade.PUBLICO)
                 .stream()
@@ -110,6 +113,7 @@ public class PatchService {
             .build();
 
         patch = patchRepository.save(patch);
+        badgeService.atribuirBadges(autor);
 
         return PatchDTO.fromEntity(patch);
     }

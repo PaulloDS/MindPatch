@@ -1,13 +1,21 @@
 package mindpatch.backend.model;
 
 import java.io.Serializable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import jakarta.persistence.Embeddable;
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
+public class UserBadgeId implements Serializable {
+    private Long user;
+    private Long badge;
 
-@Embeddable
-public class UserBadgeId implements Serializable{
-	
-	private Long userId;
-	private Long badgeId;
-
+    public UserBadgeId(Long userId, Long badgeId) {
+        this.user = userId;
+        this.badge = badgeId;
+    }
 }
