@@ -24,12 +24,14 @@ public class ComentaristaRule implements BadgeRule {
     public void aplicar(User user) {
         if (user == null || jaPossui(user, "Comentador")) return;
         
-        int totalComentarios = (int) commentRepository.countByUser(user);
+        int totalComentarios = commentRepository.countByUser(user);
 
         if (totalComentarios >= 1) {
             Badge badge = badgeRepository.findByNome("Comentador")
                     .orElseThrow(() -> new RuntimeException("Conquista inexistente!"));
 
+            
+            user.adicionarBadge(badge);
             userBadgeRepository.save(new UserBadge(user, badge, null));
             
         }

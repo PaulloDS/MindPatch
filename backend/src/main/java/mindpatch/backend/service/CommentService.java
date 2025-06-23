@@ -20,6 +20,9 @@ public class CommentService {
     @Autowired
     private PatchRepository patchRepository;
 
+    @Autowired
+    private BadgeService badgeService;
+
     public List<Comment> listByPatchId(Long patchId) {
         Patch patch = patchRepository.findById(patchId)
                 .orElseThrow(() -> new RuntimeException("Patch não encontrado"));
@@ -30,6 +33,7 @@ public class CommentService {
         Patch patch = patchRepository.findById(patchId)
                 .orElseThrow(() -> new RuntimeException("Patch não encontrado"));
         Comment comment = new Comment(null, patch, user, texto, null);
+        badgeService.atribuirBadges(user);
         return commentRepository.save(comment);
     }
 
