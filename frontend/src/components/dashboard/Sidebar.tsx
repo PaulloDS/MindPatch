@@ -24,9 +24,10 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
+import { useSidebar } from "@/context/SidebarContext";
 
 export default function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { sidebarOpen, setSidebarOpen } = useSidebar();
   const [openSections, setOpenSections] = useState({
     principal: true,
     aprendizado: false,
@@ -34,7 +35,9 @@ export default function Sidebar() {
     comunidade: false,
   });
 
-  const toggleSection = (section: string) => {
+  type SectionKey = "principal" | "aprendizado" | "ferramentas" | "comunidade";
+
+  const toggleSection = (section: SectionKey) => {
     setOpenSections({
       ...openSections,
       [section]: !openSections[section],
@@ -56,7 +59,7 @@ export default function Sidebar() {
     principal: [
       {
         name: "Dashboard",
-        href: "/principal/dashboard",
+        href: "#",
         current: true,
       },
       {
