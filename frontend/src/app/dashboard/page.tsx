@@ -2,7 +2,9 @@
 
 import CardFeed from "@/components/dashboard/CardFeed";
 import Carousel from "@/components/dashboard/Carousel";
+import DesafiosEmAlta from "@/components/dashboard/DesafiosEmAlta";
 import FeedComunidade from "@/components/dashboard/FeedComunidade";
+import RankingAtual from "@/components/dashboard/RankingAtual";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -110,9 +112,15 @@ export default function DashboardPage() {
           divirta-se.
         </p>
       </div>
-      {/* Feed Comunidade */}
-      <div className="w-[60%]">
-        <FeedComunidade />
+      <div className="flex gap-5">
+        {/* Feed Comunidade */}
+        <div className="w-[75%]">
+          <FeedComunidade />
+        </div>
+        <div className="w-[25%] space-y-3">
+          <RankingAtual />
+          <DesafiosEmAlta />
+        </div>
       </div>
     </main>
   );
