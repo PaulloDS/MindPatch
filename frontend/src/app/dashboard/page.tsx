@@ -1,6 +1,8 @@
 "use client";
 
+import CardFeed from "@/components/dashboard/CardFeed";
 import Carousel from "@/components/dashboard/Carousel";
+import FeedComunidade from "@/components/dashboard/FeedComunidade";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useSidebar } from "@/context/SidebarContext";
-import { Menu } from "lucide-react";
+import { Clock, ExternalLink, Menu } from "lucide-react";
 import Image from "next/image";
 
 export default function DashboardPage() {
@@ -27,7 +29,7 @@ export default function DashboardPage() {
         <div className="w-[400px] relative md:block">
           <span className="absolute ml-3 top-[10px]">🔍</span>
           <Input
-            className="w-full p-5 pl-9 font-medium border-green-700 md:max-w-[300px]"
+            className="w-full p-5 pl-9 font-medium border-green-700 md:w-[300px] lg:w-[600px]"
             placeholder="Buscar por desafios, usuários ..."
             type="text"
           />
@@ -41,7 +43,7 @@ export default function DashboardPage() {
             {" "}
             ➕ Novo Patch
           </Button>
-          <Button className="bg-gray-400 py-5 rounded-full hover:bg-gray-500 hover:cursor-pointer">
+          <Button className="bg-blue-400 w-[40px] rounded-full hover:bg-gray-500 hover:cursor-pointer">
             🔔
           </Button>
         </div>
@@ -50,14 +52,27 @@ export default function DashboardPage() {
       <div className="mb-5 flex justify-between gap-5">
         <Carousel />
         <div className="w-[35%] ">
-          <Card className="h-[195px] overflow-hidden bg-gradient-to-br from-yellow-500/50 to-orange-600/50 rounded-3xl shadow-xs p-4 border-none shadow-yellow-400">
+          <Card className="h-[200px] overflow-hidden bg-gradient-to-br from-yellow-500/50 to-orange-600/50 rounded-3xl border-b-4 border-orange-600 px-4 relative">
             <div className="flex justify-between">
-              <p className="text-orange-500 font-bold text-lg">Desafio Ativo</p>
+              <div className="flex gap-2 items-center">
+                <div className="text-3xl w-[40px] h-[40px] rounded-lg bg-white/40">
+                  🏆
+                </div>
+                <div className="space-y-[-3px]">
+                  <p className="text-lg font-bold text-orange-700">
+                    Desafio Ativo
+                  </p>
+                  <small className="flex items-center gap-1 text-orange-600">
+                    {" "}
+                    <Clock size={12} /> Ativo há 2 dias
+                  </small>
+                </div>
+              </div>
               <Button className="rounded-full hover:cursor-pointer bg-amber-600 shadow-lg hover:bg-amber-700">
-                Ir para desafio
+                Ir para desafio <ExternalLink />
               </Button>
             </div>
-            <div className="w-full flex gap-3 justify-center">
+            <div className="w-full flex gap-3 px-5">
               <Image
                 src="/cadeado.png"
                 width={100}
@@ -77,11 +92,18 @@ export default function DashboardPage() {
                 <Progress value={60} />
               </div>
             </div>
+            <Image
+              src="/curvas.png"
+              width={200}
+              height={100}
+              alt="Curvas"
+              className="absolute bottom-0  right-0"
+            />
           </Card>
         </div>
       </div>
 
-      <div>
+      <div className="mb-10">
         <h1 className="text-4xl text-gray-800 font-bold mb-1"> 🏠 Dashboard</h1>
         <p className="text-gray-500">
           Bem-vindo de volta! Veja o que está acontecendo na comunidade e
@@ -89,7 +111,9 @@ export default function DashboardPage() {
         </p>
       </div>
       {/* Feed Comunidade */}
-      <div></div>
+      <div className="w-[60%]">
+        <FeedComunidade />
+      </div>
     </main>
   );
 }

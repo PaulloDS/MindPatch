@@ -1,11 +1,11 @@
 import Sidebar from "@/components/dashboard/Sidebar";
 import { Metadata } from "next";
-import { Noto_Sans } from "next/font/google";
+import { Inter, Noto_Sans } from "next/font/google";
 import "../globals.css";
 import { SidebarProvider } from "@/context/SidebarContext";
 
-const notoSans = Noto_Sans({
-  variable: "--font-noto-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -22,7 +22,9 @@ export default function DashboardLayout({
   return (
     <>
       <SidebarProvider>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
+        <div
+          className={`min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 ${inter.variable}`}
+        >
           <Sidebar />
           <main className="p-6">{children}</main>
         </div>

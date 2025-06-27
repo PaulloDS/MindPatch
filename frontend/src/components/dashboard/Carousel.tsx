@@ -58,7 +58,7 @@ export default function Carousel() {
 
   return (
     <div className="w-[65%]">
-      <div className="relative bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-4xl overflow-hidden shadow-lg h[200px]">
+      <div className="relative bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-4xl overflow-hidden shadow-lg h-[200px]">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-4 right-8 w-16 h-16 border-2 border-white rounded-full"></div>
