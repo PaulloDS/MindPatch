@@ -59,17 +59,17 @@ export default function Sidebar() {
     principal: [
       {
         name: "Dashboard",
-        href: "#",
+        href: "/dashboard",
         current: true,
       },
       {
         name: "Desafios",
-        href: "/principal/desafios",
+        href: "/dashboard/desafios",
         current: false,
       },
       {
         name: "Ranking",
-        href: "/principal/ranking",
+        href: "/dashboard/ranking",
         current: false,
       },
     ],
