@@ -73,8 +73,8 @@ export default function Sidebar() {
         current: false,
       },
       {
-        name: "Ranking",
-        href: "/dashboard/ranking",
+        name: "Conquistas",
+        href: "/dashboard/conquistas",
         current: false,
       },
     ],

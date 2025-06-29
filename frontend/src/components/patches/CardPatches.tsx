@@ -9,7 +9,7 @@ import { useState } from "react";
 
 export default function CardPatches() {
   const [lado, setLado] = useState("Público");
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAbertoId, setModalAbertoId] = useState<number | null>(null);
 
   const toggleLado = () => {
     setLado((prev) => (prev === "Público" ? "Privado" : "Público"));
@@ -65,7 +65,14 @@ export default function CardPatches() {
       autor: "Paulo",
       tags: ["Java", "Spring"],
       trending: true,
-      comentarios: "Algoritmos",
+      comentarios: [
+        {
+          autor: "Paulo",
+          texto: "Primeiro comentário",
+          data: "27/08/25",
+          horario: "18:21",
+        },
+      ],
       criadoEm: "26/06/2025",
       atualizadoEm: "28/06/2025",
     },
@@ -221,16 +228,13 @@ export default function CardPatches() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6 my-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6 my-5 w-full">
       {challenges.map((challenge) => (
         <Card
           key={challenge.id}
-          className={`group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden ${
-            challenge.id ? "ring-2 ring-blue-200" : ""
-          }`}
+          className={`group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden`}
         >
           <CardHeader className="pb-3">
-            {/* Header Badges */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 {challenge.trending && (
@@ -240,9 +244,16 @@ export default function CardPatches() {
                   </Badge>
                 )}
               </div>
+              <div className="flex gap-2">
+                <Button className="w-[50%] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group-hover:shadow-xl cursor-pointer">
+                  ✏️ Editar
+                </Button>
+                <Button className="w-[50%] bg-gradient-to-r from-red-700 to-orange-800 hover:from-red-800 hover:to-orange-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group-hover:shadow-xl cursor-pointer">
+                  🗑️ Apagar
+                </Button>
+              </div>
             </div>
 
-            {/* Title and Description */}
             <div className="space-y-2">
               <h3 className="font-bold text-gray-800 text-lg group-hover:text-blue-600 transition-colors duration-300 line-clamp-1">
                 {challenge.titulo}
@@ -252,9 +263,8 @@ export default function CardPatches() {
               </p>
             </div>
 
-            {/* Tags */}
             <div className="flex flex-wrap gap-1">
-              {challenge.tags.slice(0, 3).map((tag: any, index: any) => (
+              {challenge.tags.slice(0, 3).map((tag, index) => (
                 <Badge
                   key={index}
                   variant="secondary"
@@ -275,13 +285,11 @@ export default function CardPatches() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {/* Challenge Info Grid */}
             <div>
-              {" "}
               {challenge.codigo && (
                 <div
-                  onClick={() => setModalAberto(true)}
-                  className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 rounded-2xl p-6 mb-4 border border-gray-700 shadow-2xl overflow-hidden"
+                  onClick={() => setModalAbertoId(challenge.id)}
+                  className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 rounded-2xl p-6 mb-4 border border-gray-700 shadow-2xl overflow-hidden cursor-pointer hover:ring-2 ring-green-500"
                 >
                   <div className="absolute top-4 left-4 flex gap-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -293,35 +301,34 @@ export default function CardPatches() {
                   </pre>
                 </div>
               )}
-              {modalAberto && (
+
+              {/* Modal somente do card clicado */}
+              {modalAbertoId === challenge.id && (
                 <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
                   <div className="bg-gray-900 rounded-2xl shadow-lg max-w-4xl w-full p-6 relative">
                     <button
-                      onClick={() => setModalAberto(false)}
+                      onClick={() => setModalAbertoId(null)}
                       className="absolute top-3 right-3 text-gray-300 hover:text-white"
                     >
                       ✖
                     </button>
-                    <pre
-                      className="text-green-400 text-sm font-mono overflow-auto max-h-[70vh] 
-                            scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 rounded-md"
-                    >
+                    <pre className="text-green-400 text-sm font-mono overflow-auto max-h-[70vh] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 rounded-md">
                       <code>{challenge.codigo}</code>
                     </pre>
                   </div>
                 </div>
               )}
             </div>
+
             <div className="text-blue-950 font-semibold text-sm">
               {challenge.aprendizado}
             </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-3 text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <span className="font-bold text-green-600">
-                    {challenge.criadoEm}
-                  </span>
-                </div>
+                <span className="font-bold text-green-600">
+                  {challenge.criadoEm}
+                </span>
                 <div className="text-xs text-gray-600">Data de criação</div>
               </div>
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 text-center">
@@ -335,43 +342,43 @@ export default function CardPatches() {
               </div>
             </div>
 
-            {/* Stats */}
             <div className="flex items-center justify-between text-sm text-gray-600">
               <div className="flex items-center gap-1">
                 <span className="font-bold text-gray-700">👤 Autor:</span>
-                <span>{challenge.autor.toLocaleString()}</span>
+                <span>{challenge.autor}</span>
               </div>
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex items-center space-x-2">
-                  {/* Switch */}
-                  <button
-                    onClick={toggleLado}
-                    className={`w-8 h-4 flex items-center rounded-full p-1 transition-colors duration-300
-                        ${lado === "Privado" ? "bg-blue-600" : "bg-gray-300"}`}
-                  >
-                    <div
-                      className={`bg-white w-3 h-3 rounded-full shadow-md transform transition-transform duration-300
-                        ${
-                          lado === "Privado" ? "translate-x-3" : "translate-x-0"
-                        }`}
-                    />
-                  </button>
-                  <p className="text-sm text-gray-700">
-                    <span>{lado === "Privado" ? "🔒" : "🌍"}</span>
-                    <strong>{lado}</strong>
-                  </p>
-                </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={toggleLado}
+                  className={`w-8 h-4 flex items-center rounded-full p-1 transition-colors duration-300 ${
+                    lado === "Privado" ? "bg-blue-600" : "bg-gray-300"
+                  }`}
+                >
+                  <div
+                    className={`bg-white w-3 h-3 rounded-full shadow-md transform transition-transform duration-300 ${
+                      lado === "Privado" ? "translate-x-3" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+                <p className="text-sm text-gray-700">
+                  <span>{lado === "Privado" ? "🔒" : "🌍"}</span>{" "}
+                  <strong>{lado}</strong>
+                </p>
               </div>
             </div>
 
-            {/* Action Button */}
-            <div className="flex gap-3 w-full">
-              <Button className="w-[50%] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group-hover:shadow-xl cursor-pointer">
-                ✏️ Editar
-              </Button>
-              <Button className="w-[50%] bg-gradient-to-r from-red-700 to-orange-800 hover:from-red-800 hover:to-orange-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group-hover:shadow-xl cursor-pointer">
-                🗑️ Apagar
-              </Button>
+            <div className="grid grid-cols-3 gap-3 ">
+              {/*                */}
+              <Badge className="w-full py-2 rounded-full bg-gray-500 text-sm">
+                Visualizações: 329
+              </Badge>
+              <Badge className="w-full cursor-pointer py-2 rounded-full bg-blue-400 text-sm">
+                Comentários: 21
+              </Badge>
+              <Badge className="w-full cursor-pointer py-2 rounded-full bg-red-400 text-sm">
+                Curtidas: 98
+              </Badge>
             </div>
           </CardContent>
         </Card>
