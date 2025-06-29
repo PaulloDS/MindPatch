@@ -63,6 +63,11 @@ export default function Sidebar() {
         current: true,
       },
       {
+        name: "Patches",
+        href: "/dashboard/patches",
+        current: false,
+      },
+      {
         name: "Desafios",
         href: "/dashboard/desafios",
         current: false,
