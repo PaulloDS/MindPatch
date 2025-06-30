@@ -1,6 +1,5 @@
 "use client";
 
-import CardFeed from "@/components/dashboard/CardFeed";
 import Carousel from "@/components/dashboard/Carousel";
 import DesafiosEmAlta from "@/components/dashboard/DesafiosEmAlta";
 import FeedComunidade from "@/components/dashboard/FeedComunidade";
@@ -8,14 +7,21 @@ import RankingAtual from "@/components/dashboard/RankingAtual";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { useSidebar } from "@/context/SidebarContext";
 import { Clock, ExternalLink, Menu } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/auth/sign-in");
+    }
+  }, []);
   return (
     <main className="lg:pl-80">
       <div className="mb-5 flex justify-between gap-5">

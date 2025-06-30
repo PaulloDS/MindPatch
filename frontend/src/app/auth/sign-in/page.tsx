@@ -21,6 +21,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/axios";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const testimonials = [
@@ -50,6 +55,33 @@ export default function LoginPage() {
     { icon: Star, value: "4.9", label: "Avaliação" },
     { icon: Zap, value: "24/7", label: "Suporte" },
   ];
+
+  const { register, handleSubmit } = useForm();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data: any) => {
+    try {
+      setLoading(true);
+
+      const response = await api.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
+
+      toast.success("Login ralizado com sucesso!");
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("Credenciais inválidas!");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
@@ -201,6 +233,7 @@ export default function LoginPage() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="space-y-5"
+                  onSubmit={handleSubmit(onSubmit)}
                 >
                   <div className="space-y-2">
                     <Label
@@ -213,10 +246,10 @@ export default function LoginPage() {
                       <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <Input
                         type="email"
-                        name="email"
                         className="w-full pl-12 pr-4 py-3 h-12 border-2 border-gray-200 focus:border-green-500 rounded-xl transition-all duration-300 bg-white/50 backdrop-blur-sm"
                         placeholder="seu@email.com"
                         required
+                        {...register("email")}
                       />
                     </div>
                   </div>
@@ -232,7 +265,7 @@ export default function LoginPage() {
                       <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <Input
                         type="password"
-                        name="password"
+                        {...register("password")}
                         className="w-full pl-12 pr-12 py-3 h-12 border-2 border-gray-200 focus:border-green-500 rounded-xl transition-all duration-300 bg-white/50 backdrop-blur-sm"
                         placeholder="••••••••"
                         required

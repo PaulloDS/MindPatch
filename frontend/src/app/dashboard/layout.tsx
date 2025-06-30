@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { SidebarProvider } from "@/context/SidebarContext";
 import ClientLayout from "@/components/dashboard/ClientLayout";
+import ProtectedRoute from "@/lib/ProtectedRoute";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,12 +21,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <div
-        className={`min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 ${inter.variable}`}
-      >
-        <ClientLayout>{children}</ClientLayout>
-      </div>
-    </SidebarProvider>
+    <ProtectedRoute>
+      <SidebarProvider>
+        <div
+          className={`min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 ${inter.variable}`}
+        >
+          <ClientLayout>{children}</ClientLayout>
+        </div>
+      </SidebarProvider>
+    </ProtectedRoute>
   );
 }

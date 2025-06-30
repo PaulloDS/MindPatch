@@ -296,7 +296,7 @@ export default function CardPatches() {
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
-                  <pre className="text-green-400 text-sm font-mono overflow-y-scroll mt-8 leading-relaxed h-[200px] scrollbar scrollbar-thumb-slate-700 scrollbar-track-slate-300">
+                  <pre className="text-green-400 text-sm font-mono overflow-y-scroll mt-8 leading-relaxed h-[200px]">
                     <code>{challenge.codigo}</code>
                   </pre>
                 </div>
@@ -312,7 +312,7 @@ export default function CardPatches() {
                     >
                       ✖
                     </button>
-                    <pre className="text-green-400 text-sm font-mono overflow-auto max-h-[70vh] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 rounded-md">
+                    <pre className="text-green-400 text-sm font-mono overflow-auto max-h-[70vh] rounded-md">
                       <code>{challenge.codigo}</code>
                     </pre>
                   </div>
