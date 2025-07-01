@@ -14,14 +14,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function DashboardPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/auth/sign-in");
-    }
-  }, []);
   return (
     <main className="lg:pl-80">
       <div className="mb-5 flex justify-between gap-5">

@@ -5,6 +5,32 @@ import { useSidebar } from "@/context/SidebarContext";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { CreatePatche } from "../patches/CreatePatche";
+import { api } from "@/lib/axios";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+type Patch = {
+  id: number;
+  titulo: string;
+  descricao: string;
+  codigo: string;
+  aprendizado: string;
+  autor: {
+    id: number;
+    nome: string;
+  };
+  tags: { id: number; nome: string }[];
+  comentarios: {
+    id: number;
+    texto: string;
+    autor: { id: number; nome: string };
+    criadoEm: string;
+  }[];
+  criadoEm: string;
+  atualizadoEm: string;
+  visibilidade: string;
+};
 
 export default function ClientLayout({
   children,
@@ -12,6 +38,24 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const { setSidebarOpen } = useSidebar();
+  const [patches, setPatches] = useState<Patch[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPatches = async () => {
+    try {
+      const res = await api.get("/patches/meus", { withCredentials: true });
+      setPatches(res.data);
+    } catch (error) {
+      console.error("Erro ao buscar patches: ", error);
+      toast.error("Erro ao buscar patches.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPatches();
+  }, []);
 
   return (
     <>
@@ -38,9 +82,7 @@ export default function ClientLayout({
             <Button className="py-5 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 hover:bg-emerald-200 hover:scale-110 transition-transform duration-300 hover:cursor-pointer">
               ➕ Novo Desafio
             </Button>
-            <Button className="bg-gradient-to-r from-emerald-400 to-emerald-600 py-5 hover:scale-110 transition-transform duration-300 shadow-lg shadow-green-200 hover:cursor-pointer rounded-full">
-              ➕ Novo Patch
-            </Button>
+            <CreatePatche onCreated={fetchPatches} />
             <Button className="bg-blue-400 w-[40px] rounded-full hover:bg-gray-500 hover:cursor-pointer">
               🔔
             </Button>
