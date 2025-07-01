@@ -3,7 +3,6 @@ package mindpatch.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,12 +14,10 @@ import mindpatch.backend.config.SecurityConfiguration;
 import mindpatch.backend.dto.BadgeDTO;
 import mindpatch.backend.dto.CreateUserDTO;
 import mindpatch.backend.dto.LoginUserDTO;
-import mindpatch.backend.dto.PatchDTO;
 import mindpatch.backend.dto.RecoveryJwtTokenDTO;
 import mindpatch.backend.dto.UserProfileDTO;
 import mindpatch.backend.dto.UserUpdateDTO;
 import mindpatch.backend.model.Badge;
-import mindpatch.backend.model.Patch;
 import mindpatch.backend.model.Role;
 import mindpatch.backend.model.RoleName;
 import mindpatch.backend.model.User;
@@ -72,8 +69,10 @@ public class UserService {
         // Obtém o objeto UserDetails do usuário autenticado
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
+        User user = userDetails.getUser();
+
         // Gera um token JWT para o usuário autenticado
-        return new RecoveryJwtTokenDTO(jwtTokenService.generateToken(userDetails));
+        return new RecoveryJwtTokenDTO(jwtTokenService.generateToken(userDetails), user.getId(), user.getNome(), user.getEmail());
     }
 
     // Método responsável por criar um usuário

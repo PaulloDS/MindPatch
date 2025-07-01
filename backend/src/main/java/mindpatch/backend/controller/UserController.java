@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import mindpatch.backend.dto.BadgeDTO;
 import mindpatch.backend.dto.CreateUserDTO;
 import mindpatch.backend.dto.LoginUserDTO;
-import mindpatch.backend.dto.PatchDTO;
 import mindpatch.backend.dto.RecoveryJwtTokenDTO;
 import mindpatch.backend.dto.UserProfileDTO;
 import mindpatch.backend.dto.UserUpdateDTO;
@@ -39,8 +40,17 @@ public class UserController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<RecoveryJwtTokenDTO> authenticateUser(@RequestBody LoginUserDTO loginUserDTO) {
+    public ResponseEntity<RecoveryJwtTokenDTO> authenticateUser(@RequestBody LoginUserDTO loginUserDTO, HttpServletResponse response) {
         RecoveryJwtTokenDTO token = userService.authenticateUser(loginUserDTO);
+
+        Cookie cookie = new Cookie("jwt", token.token());
+        cookie.setHttpOnly(true); // Proteje contra JS
+        cookie.setSecure(false); // true se for HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(1 * 24 * 60 * 60); // 1 dia
+
+        response.addCookie(cookie);
+
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
@@ -68,6 +78,19 @@ public class UserController {
         }
 
         UserProfileDTO dto = userService.getUserProfileById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/users/me")
+    public ResponseEntity<UserProfileDTO> getCurrentUserProfile(Authentication authentication) {
+        String email = authentication.getName();
+        User logado = userService.findByEmail(email);
+
+        if (logado == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserProfileDTO dto = userService.getUserProfileById(logado.getId());
         return ResponseEntity.ok(dto);
     }
 

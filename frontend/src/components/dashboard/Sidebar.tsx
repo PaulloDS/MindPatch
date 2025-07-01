@@ -25,6 +25,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
 import { useSidebar } from "@/context/SidebarContext";
+import { useUser } from "@/hooks/useUser";
 
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useSidebar();
@@ -34,6 +35,11 @@ export default function Sidebar() {
     ferramentas: false,
     comunidade: false,
   });
+  const { user, loading } = useUser();
+
+  if (loading) return <p>Carregando...</p>;
+
+  if (!user) return <p>Erro ao carregar usuário</p>;
 
   type SectionKey = "principal" | "aprendizado" | "ferramentas" | "comunidade";
 
@@ -42,17 +48,6 @@ export default function Sidebar() {
       ...openSections,
       [section]: !openSections[section],
     });
-  };
-
-  const user = {
-    name: "Paulo Douglas",
-    email: "paulosch14@gmail.com",
-    avatar: "/ghost.webp",
-    level: 99,
-    xp: 98766,
-    nextLevelXp: 100000,
-    streak: 369,
-    rank: 1,
   };
 
   const navigation = {
@@ -160,11 +155,11 @@ export default function Sidebar() {
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center gap-4 mb-4">
               <Avatar className="w-12 h-12 border-2 border-blue-200 rounded-full overflow-hidden">
-                <AvatarImage src={user.avatar || "/placeholder.svg"} />
-                <AvatarFallback>{user.name[0]}</AvatarFallback>
+                <AvatarImage src={"/placeholder.svg"} />
+                <AvatarFallback>{user.nome[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-800">{user.name}</h3>
+                <h3 className="font-semibold text-gray-800">{user.nome}</h3>
                 <p className="text-sm text-gray-600">{user.email}</p>
               </div>
             </div>
@@ -173,14 +168,14 @@ export default function Sidebar() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full">
-                  Nível {user.level}
+                  Nível 99
                 </Badge>
                 <span className="text-sm text-gray-600">
-                  {user.xp}/{user.nextLevelXp} XP
+                  98200/100000 XP
                 </span>
               </div>
               <Progress
-                value={(user.xp / user.nextLevelXp) * 100}
+                value={(98200/100000) * 100}
                 className="h-2"
               />
             </div>
@@ -189,13 +184,13 @@ export default function Sidebar() {
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div className="bg-gradient-to-r from-orange-200 to-red-100 rounded-lg p-3 text-center inset-shadow-sm inset-shadow-red-300">
                 <div className="text-lg font-bold text-orange-600">
-                  🔥 {user.streak}
+                  🔥 213
                 </div>
                 <div className="text-xs text-gray-600">Dias seguidos</div>
               </div>
               <div className="bg-gradient-to-r from-yellow-200 to-orange-100 rounded-lg p-3 text-center inset-shadow-sm inset-shadow-orange-300">
                 <div className="text-lg font-bold text-yellow-600">
-                  🏆 #{user.rank}
+                  🏆 #1
                 </div>
                 <div className="text-xs text-gray-600">Ranking</div>
               </div>

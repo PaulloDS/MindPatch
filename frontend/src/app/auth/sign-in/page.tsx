@@ -64,16 +64,19 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const response = await api.post("/auth/login", {
+      await api.post("/auth/login", {
         email: data.email,
         password: data.password,
       });
 
-      const token = response.data.token;
+      const userResponse = await api.get("/auth/users/me");
+      const { id, nome, email } = userResponse.data;
 
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("userId", id);
+      sessionStorage.setItem("userName", nome);
+      sessionStorage.setItem("userEmail", email);
 
-      toast.success("Login ralizado com sucesso!");
+      toast.success("Login realizado com sucesso!");
       router.push("/dashboard");
     } catch (error) {
       toast.error("Credenciais inválidas!");

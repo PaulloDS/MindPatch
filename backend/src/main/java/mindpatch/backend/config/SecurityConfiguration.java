@@ -1,5 +1,8 @@
 package mindpatch.backend.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import mindpatch.backend.filter.UserAuthenticationFilter;
 
@@ -32,6 +38,7 @@ public class SecurityConfiguration {
     // Endpoints que requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
         "/auth/users/{id}",
+        "/auth/users/me",
         "/auth/users/{id}/conquistas",
         "/patches",
         "/patches/publicos",
@@ -54,15 +61,19 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf().disable() // Desativa a proteção contra CSRF
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Configura a política de criação de sessão como stateless
-                .and().authorizeHttpRequests() // Habilita a autorização para as requisições HTTP
+        return httpSecurity
+                .csrf().disable()
+                .cors() // ATIVA O CORS
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests()
                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
-                .requestMatchers(ENDPOINTS_ADMIN).hasRole("ADMIN") // Repare que não é necessário colocar "ROLE" antes do nome, como fizemos na definição das roles
+                .requestMatchers(ENDPOINTS_ADMIN).hasRole("ADMIN")
                 .anyRequest().denyAll()
-                // Adiciona o filtro de autenticação de usuário que criamos, antes do filtro de segurança padrão do Spring Security
-                .and().addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .and()
+                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -76,4 +87,16 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true); // importante para cookies / Authorization
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

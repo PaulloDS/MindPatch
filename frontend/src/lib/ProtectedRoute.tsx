@@ -1,6 +1,8 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/axios";
 
 export default function ProtectedRoute({
   children,
@@ -11,15 +13,22 @@ export default function ProtectedRoute({
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const checkAuth = async () => {
+      try {
+        await api.get("/auth/users/me", {
+          withCredentials: true, // garante envio do cookie
+        });
 
-    if (!token) {
-      router.replace("/auth/sign-in");
-      setIsAuthenticated(false);
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, []);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.warn("Usuário não autenticado:", error);
+        setIsAuthenticated(false);
+        router.replace("/auth/sign-in");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   if (isAuthenticated === null) {
     return (

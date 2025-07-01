@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mindpatch.backend.config.SecurityConfiguration;
@@ -34,6 +35,10 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         // Verifica se o endpoint requer autenticação antes de processar a requisição
         if (checkIfEndpointIsNotPublic(request)) {
             String token = recoveryToken(request);
+            if (token == null) {
+                token = extractTokenFromRequest(request); // tenta pegar do cookie
+            }
+
             if (token != null) {
                 String subject = jwtTokenService.getSubjectFromToken(token); // Obtém o assunto (neste caso, o nome de usuário) do token
                 User user = userRepository.findByEmail(subject).get(); // Busca o usuário pelo email (que é o assunto do token)
@@ -67,4 +72,14 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
                 .noneMatch(requestURI::startsWith);  // ← verifica se a URI começa com uma das públicas
     }
 
+    private String extractTokenFromRequest(HttpServletRequest request) {
+    if (request.getCookies() != null) {
+        for (Cookie cookie : request.getCookies()) {
+            if ("jwt".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+    }
+    return null;
+}
 }
