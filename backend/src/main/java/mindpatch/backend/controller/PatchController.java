@@ -72,8 +72,10 @@ public class PatchController {
         @RequestBody @Valid PatchCreateDTO dto,
         Authentication auth
     ) {
+        System.out.println("Tags recebidas: " + dto.getTagIds());
         String email = auth.getName();
         PatchDTO criado = patchService.criar(dto, email);
+        System.out.println("Tags recebidas: " + dto.getTagIds());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }

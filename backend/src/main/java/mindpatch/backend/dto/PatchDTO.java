@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mindpatch.backend.model.Patch;
+import mindpatch.backend.model.Visibilidade;
 
 @Getter
 @Setter
@@ -28,6 +29,7 @@ public class PatchDTO {
     private List<CommentDTO> comentarios;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
+    private Visibilidade visibilidade;
 
     public static PatchDTO fromEntity(Patch patch) {
         PatchDTO dto = new PatchDTO();
@@ -36,6 +38,7 @@ public class PatchDTO {
         dto.setDescricao(patch.getDescricao());
         dto.setCodigo(patch.getCodigo());
         dto.setAprendizado(patch.getAprendizado());
+        dto.setVisibilidade(patch.getVisibilidade());
         
 
         dto.setAutor(new AutorPatchDTO(patch.getAutor().getId(), patch.getAutor().getNome()));

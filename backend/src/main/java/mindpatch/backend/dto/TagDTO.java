@@ -8,10 +8,12 @@ import mindpatch.backend.model.Tag;
 @Getter
 public class TagDTO {
 
+    private Long id;
     private String nome;
 
     public static TagDTO fromEntity(Tag tag) {
         TagDTO dto = new TagDTO();
+        dto.setId(tag.getId());
         dto.setNome(tag.getNome());
         return dto;
     }

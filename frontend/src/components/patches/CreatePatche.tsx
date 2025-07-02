@@ -42,7 +42,7 @@ export function CreatePatche({ onCreated }: { onCreated: () => void }) {
     try {
       await api.post(
         "/patches",
-        { ...form, visibilidade, tags: tagsSelecionadas },
+        { ...form, visibilidade, tagIds: tagsSelecionadas },
         { withCredentials: true }
       );
       toast.success("Patch criado com sucesso!");
