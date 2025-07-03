@@ -13,4 +13,5 @@ import mindpatch.backend.model.User;
 public interface CommentRepository extends JpaRepository<Comment, Long>{
     int countByUser(User user);
     List<Comment> findByPatch(Patch patch);
+    void deleteByPatchId(Long patchId);
 }

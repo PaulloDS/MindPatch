@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mindpatch.backend.dto.PatchCreateDTO;
 import mindpatch.backend.dto.PatchDTO;
@@ -17,6 +18,7 @@ import mindpatch.backend.model.RoleName;
 import mindpatch.backend.model.Tag;
 import mindpatch.backend.model.User;
 import mindpatch.backend.model.Visibilidade;
+import mindpatch.backend.repository.CommentRepository;
 import mindpatch.backend.repository.PatchRepository;
 import mindpatch.backend.repository.TagRepository;
 import mindpatch.backend.utils.PatchSpecifications;
@@ -33,6 +35,9 @@ public class PatchService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private TagService tagService;
@@ -142,6 +147,7 @@ public class PatchService {
         return PatchDTO.fromEntity(atualizado);
     }
 
+    @Transactional
     public void deletar(Long id, String emailUsuario) {
         Patch patch = patchRepository.findById(id)       
                     .orElseThrow(() -> new RuntimeException("Patch não encontrado!"));
@@ -156,7 +162,7 @@ public class PatchService {
         if (!isAdmin && !isAutor) {
             throw new RuntimeException("Sem permissão!");
         }
-
+        commentRepository.deleteByPatchId(id);
         patchRepository.delete(patch);
     }
 }
