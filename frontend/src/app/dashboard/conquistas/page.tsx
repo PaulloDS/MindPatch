@@ -51,7 +51,7 @@ export default function ConquistasPage() {
           title={badge.nome}
           description={badge.descricao}
           icon={
-            <img src={badge.iconeURL} alt={badge.nome} className="w-6 h-6" />
+            <img src={badge.iconeURL} alt={badge.nome} className="w-10 h-10" />
           }
         />
       ))}
