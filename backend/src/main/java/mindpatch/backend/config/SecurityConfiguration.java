@@ -49,6 +49,7 @@ public class SecurityConfiguration {
         "/tags/{id}",
         "/badges",
         "/badges/{id}",
+        "/bades/usuario/{userId}",
         "/patches/{patchId}/comments",
         "/comments/{id}"
     };
