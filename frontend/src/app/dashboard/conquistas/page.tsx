@@ -32,12 +32,11 @@ export default function ConquistasPage() {
   const [badges, setBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<
-    "todas" | "conquistadas" | "emAndamento"
+    "todas" | "conquistadas"
   >("todas");
 
   const filteredBadges = badges.filter((badge) => {
     if (filter === "conquistadas") return badge.conquistada;
-    if (filter === "emAndamento") return !badge.conquistada;
     return true;
   });
 
@@ -80,9 +79,6 @@ export default function ConquistasPage() {
               </MenubarItem>
               <MenubarItem onClick={() => setFilter("conquistadas")}>
                 Conquistadas
-              </MenubarItem>
-              <MenubarItem onClick={() => setFilter("emAndamento")}>
-                Em andamento
               </MenubarItem>
             </MenubarContent>
           </MenubarMenu>
