@@ -76,23 +76,6 @@ export default function Sidebar() {
     aprendizado: [
       { name: "Aprender", href: "/aprender", icon: Book, current: false },
     ],
-    ferramentas: [
-      {
-        name: "Editor",
-        href: "/ferramentas/editor",
-        current: false,
-      },
-      {
-        name: "Projetos",
-        href: "/ferramentas/projetos",
-        current: false,
-      },
-      {
-        name: "Visualizar todas",
-        href: "/ferramentas/todas",
-        current: false,
-      },
-    ],
     comunidade: [
       {
         name: "Comunidade",
@@ -276,53 +259,6 @@ export default function Sidebar() {
               {openSections.aprendizado && (
                 <div className="pl-6 space-y-1">
                   {navigation.aprendizado.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`relative flex items-center gap-3 px-4 py-1 rounded-xl transition-all duration-300 ${
-                        item.current
-                          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
-                          : "text-gray-600 hover:bg-gray-200 hover:text-gray-800"
-                      }`}
-                    >
-                      ▪️
-                      <span className="font-medium">{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Ferramentas */}
-            <div>
-              <button
-                className="flex items-center justify-between w-full py-2 text-gray-600 rounded-md hover:bg-gray-50 hover:text-gray-800"
-                onClick={() => toggleSection("ferramentas")}
-              >
-                <div className="flex items-center gap-3">
-                  ⚙️
-                  <span className="font-medium">Ferramentas</span>
-                </div>
-                <svg
-                  className={`w-4 h-4 transition-transform transform ${
-                    openSections.ferramentas ? "rotate-90" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5l7 7-7 7"
-                  ></path>
-                </svg>
-              </button>
-              {openSections.ferramentas && (
-                <div className="pl-6 space-y-1">
-                  {navigation.ferramentas.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
