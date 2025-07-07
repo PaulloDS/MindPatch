@@ -25,20 +25,13 @@ interface Badge {
   nome: string;
   descricao: string;
   iconeURL: string;
-  conquistada: boolean;
 }
 
 export default function ConquistasPage() {
   const [badges, setBadges] = useState<Badge[]>([]);
+  const [userBadges, setUserBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<
-    "todas" | "conquistadas"
-  >("todas");
-
-  const filteredBadges = badges.filter((badge) => {
-    if (filter === "conquistadas") return badge.conquistada;
-    return true;
-  });
+  const [filter, setFilter] = useState<"todas" | "conquistadas">("todas");
 
   const userId =
     typeof window !== "undefined" ? sessionStorage.getItem("userId") : null;
@@ -47,10 +40,12 @@ export default function ConquistasPage() {
     if (!userId) return;
 
     try {
-      const res = await api.get(`/badges`, {
-        withCredentials: true,
-      });
-      setBadges(res.data);
+      const [allBadgesRes, userBadgesRes] = await Promise.all([
+        api.get("/badges", { withCredentials: true }),
+        api.get(`/auth/users/${userId}/conquistas`, { withCredentials: true }),
+      ]);
+      setBadges(allBadgesRes.data);
+      setUserBadges(userBadgesRes.data);
     } catch (error) {
       console.error("Erro ao buscar conquistas: ", error);
       toast.error("Erro ao buscar conquistas.");
@@ -64,6 +59,13 @@ export default function ConquistasPage() {
   }, [userId]);
 
   if (loading) return <p>Carregando conquistas...</p>;
+
+  const userBadgeIds = new Set(userBadges.map((b) => b.id));
+
+  const filteredBadges =
+    filter === "todas"
+      ? badges
+      : badges.filter((badge) => userBadgeIds.has(badge.id));
 
   return (
     <div className="lg:pl-80">
@@ -85,20 +87,30 @@ export default function ConquistasPage() {
         </Menubar>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredBadges.map((badge) => (
-          <AchievementCard
-            key={badge.id}
-            title={badge.nome}
-            description={badge.descricao}
-            icon={
-              <img
-                src={badge.iconeURL}
-                alt={badge.nome}
-                className="w-10 h-10"
-              />
-            }
-          />
-        ))}
+        {filteredBadges.map((badge) => {
+          const conquistada = userBadgeIds.has(badge.id);
+          const isCinza = filter === "todas" && !conquistada;
+
+          return (
+            <AchievementCard
+              key={badge.id}
+              title={badge.nome}
+              description={badge.descricao}
+              icon={
+                <img
+                  src={badge.iconeURL}
+                  alt={badge.nome}
+                  className="w-10 h-10"
+                />
+              }
+              className={
+                isCinza
+                  ? "bg-gray-200 opacity-80 border-b-white text-gray-600"
+                  : "bg-gradient-to-br from-orange-400 to-yellow-200 border-b-orange-500 text-orange-700"
+              }
+            />
+          );
+        })}
       </div>
     </div>
   );
