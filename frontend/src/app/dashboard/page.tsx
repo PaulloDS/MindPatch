@@ -79,12 +79,8 @@ export default function DashboardPage() {
       </div>
       <div className="flex gap-5">
         {/* Feed Comunidade */}
-        <div className="w-[75%]">
+        <div className="w-full">
           <FeedComunidade />
-        </div>
-        <div className="w-[25%] space-y-3">
-          <RankingAtual />
-          <DesafiosEmAlta />
         </div>
       </div>
     </main>
