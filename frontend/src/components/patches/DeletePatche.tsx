@@ -35,7 +35,7 @@ export function DeletePatche({
         <div className="space-y-4">
           <p>Tem certeza que deseja apagar este patch?</p>
           <div className="flex justify-between">
-            <Button onClick={() => setOpen(false)} variant="outline">
+            <Button onClick={() => setOpen(false)} variant="outline" className="bg-gray-400">
               Cancelar
             </Button>
             <Button

@@ -64,68 +64,71 @@ export function EditPatche({
       <DialogTrigger asChild>
         <Button>✏️ Editar</Button>
       </DialogTrigger>
-      <DialogContent>
-        <div className="space-y-3">
+      <DialogContent className="bg-gradient-to-br from-gray-200 to-emerald-100">
+        <div className="space-y-3 py-5">
           <input
-            className="w-full border p-2 rounded"
+            className="w-full border p-2 px-4 rounded-xl border-emerald-700"
             value={form.titulo}
             onChange={(e) => setForm({ ...form, titulo: e.target.value })}
           />
           <textarea
-            className="w-full border p-2 rounded"
+            className="w-full border p-2 px-4 rounded-xl border-emerald-700"
             value={form.descricao}
             onChange={(e) => setForm({ ...form, descricao: e.target.value })}
           />
           <textarea
-            className="w-full border p-2 rounded font-mono"
+            className="w-full border p-2 px-4 rounded-xl font-mono border-emerald-700"
             value={form.codigo}
             onChange={(e) => setForm({ ...form, codigo: e.target.value })}
           />
           <input
-            className="w-full border p-2 rounded"
+            className="w-full border p-2 px-4 rounded-xl border-emerald-700"
             value={form.aprendizado}
             onChange={(e) => setForm({ ...form, aprendizado: e.target.value })}
           />
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Tags:
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {tagsDisponiveis.map((tag) => (
-                <label
-                  key={tag.id}
-                  className="flex items-center space-x-1 text-sm"
-                >
-                  <input
-                    type="checkbox"
-                    checked={tagsSelecionadas.includes(tag.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setTagsSelecionadas([...tagsSelecionadas, tag.id]);
-                      } else {
-                        setTagsSelecionadas(
-                          tagsSelecionadas.filter((id) => id !== tag.id)
-                        );
-                      }
-                    }}
-                  />
-                  <span>{tag.nome}</span>
-                </label>
-              ))}
+          <div className="space-y-2 flex justify-between">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Tags:
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {tagsDisponiveis.map((tag) => (
+                  <label
+                    key={tag.id}
+                    className="flex items-center space-x-1 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={tagsSelecionadas.includes(tag.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setTagsSelecionadas([...tagsSelecionadas, tag.id]);
+                        } else {
+                          setTagsSelecionadas(
+                            tagsSelecionadas.filter((id) => id !== tag.id)
+                          );
+                        }
+                      }}
+                    />
+                    <span>{tag.nome}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 bg-green-300 px-3 rounded-full text-emerald-800">
+              <Switch
+                id="visibilidade"
+                checked={visibilidade === "PUBLICO"}
+                onCheckedChange={(value) =>
+                  setVisibilidade(value ? "PUBLICO" : "PRIVADO")
+                }
+              />
+              <label htmlFor="visibilidade" className="text-sm">
+                {visibilidade === "PUBLICO" ? "🌎 Público" : "🔒 Privado"}
+              </label>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="visibilidade"
-              checked={visibilidade === "PUBLICO"}
-              onCheckedChange={(value) =>
-                setVisibilidade(value ? "PUBLICO" : "PRIVADO")
-              }
-            />
-            <label htmlFor="visibilidade" className="text-sm">
-              {visibilidade === "PUBLICO" ? "🌎 Público" : "🔒 Privado"}
-            </label>
-          </div>
+
           <Button
             onClick={handleSubmit}
             className="w-full bg-green-600 hover:bg-green-700"
