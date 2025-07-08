@@ -26,6 +26,7 @@ import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/hooks/useUser";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useSidebar();
@@ -36,6 +37,7 @@ export default function Sidebar() {
     comunidade: false,
   });
   const { user, loading } = useUser();
+  const pathname = usePathname();
 
   if (loading) return <p>Carregando...</p>;
 
@@ -55,22 +57,18 @@ export default function Sidebar() {
       {
         name: "Dashboard",
         href: "/dashboard",
-        current: true,
       },
       {
         name: "Patches",
         href: "/dashboard/patches",
-        current: false,
       },
       {
         name: "Desafios",
         href: "/dashboard/desafios",
-        current: false,
       },
       {
         name: "Conquistas",
         href: "/dashboard/conquistas",
-        current: false,
       },
     ],
     aprendizado: [
@@ -153,28 +151,19 @@ export default function Sidebar() {
                 <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full">
                   Nível 99
                 </Badge>
-                <span className="text-sm text-gray-600">
-                  98200/100000 XP
-                </span>
+                <span className="text-sm text-gray-600">98200/100000 XP</span>
               </div>
-              <Progress
-                value={(98200/100000) * 100}
-                className="h-2"
-              />
+              <Progress value={(98200 / 100000) * 100} className="h-2" />
             </div>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div className="bg-gradient-to-r from-orange-200 to-red-100 rounded-lg p-3 text-center inset-shadow-sm inset-shadow-red-300">
-                <div className="text-lg font-bold text-orange-600">
-                  🔥 213
-                </div>
+                <div className="text-lg font-bold text-orange-600">🔥 213</div>
                 <div className="text-xs text-gray-600">Dias seguidos</div>
               </div>
               <div className="bg-gradient-to-r from-yellow-200 to-orange-100 rounded-lg p-3 text-center inset-shadow-sm inset-shadow-orange-300">
-                <div className="text-lg font-bold text-yellow-600">
-                  🏆 #1
-                </div>
+                <div className="text-lg font-bold text-yellow-600">🏆 #1</div>
                 <div className="text-xs text-gray-600">Ranking</div>
               </div>
             </div>
@@ -216,7 +205,7 @@ export default function Sidebar() {
                       key={item.name}
                       href={item.href}
                       className={`flex items-center gap-3 px-4 py-1 rounded-xl transition-all duration-300 ${
-                        item.current
+                        pathname === item.href
                           ? "bg-gradient-to-r from-green-500 to-cyan-600 text-white shadow-lg"
                           : "text-gray-600 hover:bg-gray-200 hover:text-gray-800"
                       }`}
@@ -263,53 +252,6 @@ export default function Sidebar() {
                       key={item.name}
                       href={item.href}
                       className={`relative flex items-center gap-3 px-4 py-1 rounded-xl transition-all duration-300 ${
-                        item.current
-                          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
-                          : "text-gray-600 hover:bg-gray-200 hover:text-gray-800"
-                      }`}
-                    >
-                      ▪️
-                      <span className="font-medium">{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Comunidade */}
-            <div>
-              <button
-                className="flex items-center justify-between w-full py-2 text-gray-600 rounded-md hover:bg-gray-50 hover:text-gray-800"
-                onClick={() => toggleSection("comunidade")}
-              >
-                <div className="flex items-center gap-3">
-                  👥
-                  <span className="font-medium">Comunidade</span>
-                </div>
-                <svg
-                  className={`w-4 h-4 transition-transform transform ${
-                    openSections.comunidade ? "rotate-90" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5l7 7-7 7"
-                  ></path>
-                </svg>
-              </button>
-              {openSections.comunidade && (
-                <div className="pl-6 space-y-1">
-                  {navigation.comunidade.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`flex items-center gap-3 px-4 py-1 rounded-xl transition-all duration-300 ${
                         item.current
                           ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
                           : "text-gray-600 hover:bg-gray-200 hover:text-gray-800"
