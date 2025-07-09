@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Filter, Lock, Search } from "lucide-react";
@@ -8,112 +8,112 @@ import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import CardPatches from "./CardPatches";
 
-interface Patch {
+type Patch = {
   id: number;
   titulo: string;
-  autor: string;
-  codigo: string;
+  descricao: string;
+  autor: { nome: string };
+  tags: { nome: string }[];
   visibilidade: string;
-  tags: string;
-}
+  criadoEm: string;
+  atualizadoEm: string;
+  aprendizado: string;
+  codigo: string;
+  comentarios?: {
+    id: number;
+    texto: string;
+    autorNome: string;
+    criadoEm: string;
+  }[];
+};
 
-interface FiltroBuscaProps {
-  onSearch: (resultados: Patch[] | null) => void;
-}
-
-const visibilidadeOptions = ["Público", "Privado"];
-const camposBusca = ["titulo", "autor", "tags"];
-
-export default function FiltroBusca({ onSearch }: FiltroBuscaProps) {
-  const [campoSelecionado, setCampoSelecionado] = useState<string>("titulo");
-  const [valorBusca, setValorBusca] = useState("");
+export default function FiltroBusca() {
+  const [search, setSearch] = useState("");
+  const [tag, setTag] = useState("");
   const [visibilidade, setVisibilidade] = useState<string | null>(null);
+  const [resultados, setResultados] = useState<Patch[] | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchPatches = async () => {
-    if (!valorBusca && !visibilidade) {
-      toast.warning("Digite um termo ou selecione uma visibilidade.");
-      return;
-    }
-
-    setLoading(true);
+  const buscar = async () => {
     try {
+      setLoading(true);
       const params: any = {};
-      if (valorBusca) {
-        params[campoSelecionado] = valorBusca;
-      }
-      if (visibilidade) {
-        params.visibilidade = visibilidade;
-      }
+      if (search) params.titulo = search;
+      if (tag) params.tag = tag;
+      if (visibilidade) params.visibilidade = visibilidade;
 
       const res = await api.get("/patches/search", { params });
-      onSearch(res.data);
-    } catch (error) {
-      toast.error("Erro ao buscar patches.");
-      console.error(error);
+      setResultados(res.data);
+    } catch (err) {
+      toast.error("Erro ao buscar patches");
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔥 BUSCA INICIAL AUTOMÁTICA
+  useEffect(() => {
+    buscar();
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 my-6">
       <div className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl p-4 shadow-lg space-y-4">
         {/* Campo de busca */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
-            Campo de busca
-          </label>
-          <div className="flex gap-2">
-            <select
-              value={campoSelecionado}
-              onChange={(e) => setCampoSelecionado(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 bg-white text-sm"
-            >
-              {camposBusca.map((campo) => (
-                <option key={campo} value={campo}>
-                  {campo.charAt(0).toUpperCase() + campo.slice(1)}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              placeholder={`Buscar por ${campoSelecionado}`}
-              value={valorBusca}
-              onChange={(e) => setValorBusca(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Buscar por título..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200"
+          />
+        </div>
+
+        {/* Campo de Tag manual */}
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Tag (ex: JavaScript)"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200"
+          />
         </div>
 
         {/* Visibilidade */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
-            Visibilidade
-          </label>
-          <div className="flex gap-2">
-            {visibilidadeOptions.map((option) => (
-              <Button
-                key={option}
-                size="sm"
-                variant={visibilidade === option ? "default" : "outline"}
-                onClick={() =>
-                  setVisibilidade(visibilidade === option ? null : option)
-                }
-              >
-                {option}
-              </Button>
-            ))}
-          </div>
+        <div className="flex gap-2 flex-wrap">
+          <Badge className="bg-gray-100 text-gray-700">
+            <Lock className="w-3 h-3 mr-1" /> Visibilidade
+          </Badge>
+          {["Publico", "Privado"].map((v) => (
+            <Button
+              key={v}
+              variant={visibilidade === v ? "default" : "outline"}
+              size="sm"
+              onClick={() => setVisibilidade(v === visibilidade ? null : v)}
+            >
+              {v}
+            </Button>
+          ))}
         </div>
 
-        {/* Botão Buscar */}
-        <div>
-          <Button onClick={fetchPatches} className="w-full" disabled={loading}>
-            {loading ? "Buscando..." : "Buscar Patches"}
-          </Button>
-        </div>
+        {/* Botão de buscar */}
+        <Button className="w-full" onClick={buscar}>
+          Buscar Patches
+        </Button>
       </div>
+
+      {/* Resultado da busca */}
+      {loading ? (
+        <p className="text-sm text-gray-500">Carregando...</p>
+      ) : resultados && resultados.length === 0 ? (
+        <p className="text-sm text-gray-500">Nenhum patch encontrado.</p>
+      ) : (
+        resultados?.map((p) => <CardPatches key={p.id} patch={p} />)
+      )}
     </div>
   );
 }
