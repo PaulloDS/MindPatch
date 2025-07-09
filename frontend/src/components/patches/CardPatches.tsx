@@ -34,7 +34,18 @@ type Patch = {
   visibilidade: string;
 };
 
-export default function CardPatches() {
+interface CardPatchesProps {
+  patch?: {
+    id: number;
+    titulo: string;
+    descricao: string;
+    autor: string;
+    tags: string;
+    visibilidade: string;
+  };
+}
+
+export default function CardPatches({ patch }: CardPatchesProps) {
   const [patches, setPatches] = useState<Patch[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalAbertoId, setModalAbertoId] = useState<number | null>(null);

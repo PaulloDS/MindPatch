@@ -60,10 +60,12 @@ public class PatchController {
         @RequestParam(required = false) String titulo,
         @RequestParam(required = false) String codigo,
         @RequestParam(required = false) String autor,
+        @RequestParam(required = false) String tag,
+        @RequestParam(required = false) String visibilidade,
         Authentication auth
     ) {
         String email = (auth != null) ? auth.getName() : ""; // permite busca anônima
-        List<PatchDTO> resultados = patchService.buscarPorFiltros(titulo, codigo, autor, email);
+        List<PatchDTO> resultados = patchService.buscarPorFiltros(titulo, codigo, autor, tag, visibilidade, email);
         return ResponseEntity.ok(resultados);
     }
 

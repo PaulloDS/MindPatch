@@ -1,6 +1,5 @@
 package mindpatch.backend.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import mindpatch.backend.dto.BadgeCreateDTO;
 import mindpatch.backend.dto.BadgeDTO;
-import mindpatch.backend.dto.UserBadgeDTO;
 import mindpatch.backend.service.BadgeService;
 import mindpatch.backend.service.UserBadgeService;
 
@@ -41,12 +39,6 @@ public class BadgeController {
     @GetMapping("/{id}")
     public ResponseEntity<BadgeDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(badgeService.buscarPorId(id));
-    }
-
-    @GetMapping("/usuario/{userId}")
-    public ResponseEntity<List<UserBadgeDTO>> listarPorUsuario(@PathVariable Long userId, Principal principal) {
-        System.out.println("Usuário autenticado: " + principal.getName()); 
-        return ResponseEntity.ok(userBadgeService.listarPorUsuario(userId));
     }
 
     @PostMapping

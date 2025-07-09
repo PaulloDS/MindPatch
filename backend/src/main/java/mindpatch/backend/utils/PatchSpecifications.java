@@ -11,7 +11,7 @@ import mindpatch.backend.model.Visibilidade;
 
 public class PatchSpecifications {
 
-    public static Specification<Patch> comFiltros(String titulo, String codigo, String autor, boolean isAdmin, String emailUsuario) {
+    public static Specification<Patch> comFiltros(String titulo, String codigo, String autor, String tag, String visibilidade, boolean isAdmin, String emailUsuario) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -33,6 +33,14 @@ public class PatchSpecifications {
 
             if (autor != null && !autor.isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("autor").get("nome")), "%" + autor.toLowerCase() + "%"));
+            }
+
+            if (tag != null && !tag.isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("tags").get("nome")), "%" + tag.toLowerCase() + "%"));
+            }
+
+            if (visibilidade != null && !visibilidade.isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("visibilidade")), "%" + visibilidade.toLowerCase() + "%"));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

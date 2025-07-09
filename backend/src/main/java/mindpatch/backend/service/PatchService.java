@@ -89,13 +89,13 @@ public class PatchService {
                 .collect(Collectors.toList());
     }
 
-    public List<PatchDTO> buscarPorFiltros(String titulo, String codigo, String autor, String emailUsuario) {
+    public List<PatchDTO> buscarPorFiltros(String titulo, String codigo, String autor, String tag, String visibilidade, String emailUsuario) {
 
         User user = userService.findByEmail(emailUsuario);
         boolean isAdmin = user.getRoles().stream()
             .anyMatch(role -> role.getName() == RoleName.ROLE_ADMIN);
 
-        Specification<Patch> spec = PatchSpecifications.comFiltros(titulo, codigo, autor, isAdmin, emailUsuario);
+        Specification<Patch> spec = PatchSpecifications.comFiltros(titulo, codigo, autor, tag, visibilidade, isAdmin, emailUsuario);
 
         return patchRepository.findAll(spec).stream()
             .map(PatchDTO::fromEntity)

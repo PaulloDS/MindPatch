@@ -3,66 +3,116 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Filter, SlidersHorizontal, Search, Lock } from "lucide-react";
+import { Filter, Lock, Search } from "lucide-react";
+import { api } from "@/lib/axios";
+import { toast } from "sonner";
+import CardPatches from "./CardPatches";
 
-const visibilidade = ["Público", "Privado"];
-const tags = ["JavaScript", "Python", "Java", "C++", "TypeScript"];
+interface Patch {
+  id: number;
+  titulo: string;
+  autor: string;
+  codigo: string;
+  visibilidade: string;
+  tags: string;
+}
 
-export default function FiltroBusca() {
-  const [selectVisibilidades, setSelectVisibilidades] = useState<string | null>(
-    null
-  );
-  const [selectTags, setSelectTags] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
+interface FiltroBuscaProps {
+  onSearch: (resultados: Patch[] | null) => void;
+}
+
+const visibilidadeOptions = ["Público", "Privado"];
+const camposBusca = ["titulo", "autor", "tags"];
+
+export default function FiltroBusca({ onSearch }: FiltroBuscaProps) {
+  const [campoSelecionado, setCampoSelecionado] = useState<string>("titulo");
+  const [valorBusca, setValorBusca] = useState("");
+  const [visibilidade, setVisibilidade] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPatches = async () => {
+    if (!valorBusca && !visibilidade) {
+      toast.warning("Digite um termo ou selecione uma visibilidade.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const params: any = {};
+      if (valorBusca) {
+        params[campoSelecionado] = valorBusca;
+      }
+      if (visibilidade) {
+        params.visibilidade = visibilidade;
+      }
+
+      const res = await api.get("/patches/search", { params });
+      onSearch(res.data);
+    } catch (error) {
+      toast.error("Erro ao buscar patches.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl p-4 shadow-lg space-y-4">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-        <input
-          type="text"
-          placeholder="Buscar patche..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-      </div>
+    <div className="space-y-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl p-4 shadow-lg space-y-4">
+        {/* Campo de busca */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Campo de busca
+          </label>
+          <div className="flex gap-2">
+            <select
+              value={campoSelecionado}
+              onChange={(e) => setCampoSelecionado(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 bg-white text-sm"
+            >
+              {camposBusca.map((campo) => (
+                <option key={campo} value={campo}>
+                  {campo.charAt(0).toUpperCase() + campo.slice(1)}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder={`Buscar por ${campoSelecionado}`}
+              value={valorBusca}
+              onChange={(e) => setValorBusca(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
+            />
+          </div>
+        </div>
 
-      {/* Difficulty */}
-      <div className="flex flex-wrap gap-2">
-        <Badge className="bg-gray-100 text-gray-700">
-          <Filter className="w-3 h-3 mr-1" /> Tag
-        </Badge>
-        {tags.map((dif) => (
-          <Button
-            key={dif}
-            size="sm"
-            variant={selectTags === dif ? "default" : "outline"}
-            onClick={() => setSelectTags(dif === selectTags ? null : dif)}
-          >
-            {dif}
-          </Button>
-        ))}
-      </div>
+        {/* Visibilidade */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Visibilidade
+          </label>
+          <div className="flex gap-2">
+            {visibilidadeOptions.map((option) => (
+              <Button
+                key={option}
+                size="sm"
+                variant={visibilidade === option ? "default" : "outline"}
+                onClick={() =>
+                  setVisibilidade(visibilidade === option ? null : option)
+                }
+              >
+                {option}
+              </Button>
+            ))}
+          </div>
+        </div>
 
-      {/* Languages */}
-      <div className="flex flex-wrap gap-2">
-        <Badge className="bg-gray-100 text-gray-700">
-          <Lock className="w-3 h-3 mr-1" /> Visibilidade
-        </Badge>
-        {visibilidade.map((lang) => (
-          <Button
-            key={lang}
-            size="sm"
-            variant={selectVisibilidades === lang ? "default" : "outline"}
-            onClick={() =>
-              setSelectVisibilidades(lang === selectVisibilidades ? null : lang)
-            }
-          >
-            {lang}
+        {/* Botão Buscar */}
+        <div>
+          <Button onClick={fetchPatches} className="w-full" disabled={loading}>
+            {loading ? "Buscando..." : "Buscar Patches"}
           </Button>
-        ))}
+        </div>
       </div>
     </div>
   );
