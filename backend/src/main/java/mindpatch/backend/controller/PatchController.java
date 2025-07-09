@@ -35,9 +35,13 @@ public class PatchController {
     }
 
     @GetMapping("/meus")
-    public ResponseEntity<List<PatchDTO>> meusPatches(Authentication authentication) {
+    public ResponseEntity<List<PatchDTO>> meusPatches(Authentication authentication,     @RequestParam(required = false) String titulo,
+    @RequestParam(required = false) String codigo,
+    @RequestParam(required = false) String tag,
+    @RequestParam(required = false) String visibilidade) {
         String email = authentication.getName();
-        return ResponseEntity.ok(patchService.listarMeusPatches(email));
+        List<PatchDTO> resultados = patchService.buscarMeusPatchesComFiltros(email, titulo, codigo, tag, visibilidade);
+        return ResponseEntity.ok(resultados);
     }
 
     @GetMapping("/{id}")

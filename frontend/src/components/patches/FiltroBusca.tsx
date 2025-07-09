@@ -42,7 +42,7 @@ export default function FiltroBusca() {
       if (tag) params.tag = tag;
       if (visibilidade) params.visibilidade = visibilidade;
 
-      const res = await api.get("/patches/search", { params });
+      const res = await api.get("/patches/meus", { params });
       setResultados(res.data);
     } catch (err) {
       toast.error("Erro ao buscar patches");

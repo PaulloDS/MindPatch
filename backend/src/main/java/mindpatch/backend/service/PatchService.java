@@ -21,11 +21,15 @@ import mindpatch.backend.model.Visibilidade;
 import mindpatch.backend.repository.CommentRepository;
 import mindpatch.backend.repository.PatchRepository;
 import mindpatch.backend.repository.TagRepository;
+import mindpatch.backend.repository.UserRepository;
 import mindpatch.backend.utils.PatchSpecifications;
 
 @Service
 @RequiredArgsConstructor
 public class PatchService {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private PatchRepository patchRepository;
@@ -165,4 +169,41 @@ public class PatchService {
         commentRepository.deleteByPatchId(id);
         patchRepository.delete(patch);
     }
+
+    public List<PatchDTO> buscarMeusPatchesComFiltros(String email, String titulo, String codigo, String tag, String visibilidade) {
+    User usuario = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+    Specification<Patch> spec = Specification.where((root, query, cb) -> 
+        cb.equal(root.get("autor").get("id"), usuario.getId()) // apenas do usuário
+    );
+
+    if (titulo != null && !titulo.isEmpty()) {
+        spec = spec.and((root, query, cb) ->
+            cb.like(cb.lower(root.get("titulo")), "%" + titulo.toLowerCase() + "%")
+        );
+    }
+
+    if (codigo != null && !codigo.isEmpty()) {
+        spec = spec.and((root, query, cb) ->
+            cb.like(cb.lower(root.get("codigo")), "%" + codigo.toLowerCase() + "%")
+        );
+    }
+
+    if (tag != null && !tag.isEmpty()) {
+        spec = spec.and((root, query, cb) ->
+            cb.like(cb.lower(root.join("tags").get("nome")), "%" + tag.toLowerCase() + "%")
+        );
+    }
+
+    if (visibilidade != null && !visibilidade.isEmpty()) {
+        spec = spec.and((root, query, cb) ->
+            cb.equal(cb.lower(root.get("visibilidade")), visibilidade.toLowerCase())
+        );
+    }
+
+    List<Patch> patches = patchRepository.findAll(spec);
+    return patches.stream().map(PatchDTO::fromEntity).toList();
+}
+
 }
