@@ -44,9 +44,13 @@ public class CommentService {
         boolean isAdmin = requester.getRoles().stream()
             .anyMatch(role -> role.getName().name().equals("ROLE_ADMIN"));
 
-         if (!comment.getUser().getId().equals(requester.getId()) && !isAdmin) {
-            throw new RuntimeException("Apenas o autor ou admin pode deletar o comentário.");
-         }
+        boolean isAuthorOfComment = comment.getUser().getId().equals(requester.getId());
+
+        boolean isAuthorOfPatch = comment.getPatch().getAutor().getId().equals(requester.getId());
+
+        if (!isAuthorOfComment && !isAdmin && !isAuthorOfPatch) {
+            throw new RuntimeException("Sem permissão!");
+        }
 
          commentRepository.delete(comment);
     }

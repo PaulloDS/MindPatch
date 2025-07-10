@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import mindpatch.backend.dto.CommentCreateDTO;
 import mindpatch.backend.dto.CommentDTO;
 import mindpatch.backend.model.Comment;
 import mindpatch.backend.model.User;
@@ -41,17 +42,17 @@ public class CommentController {
     }
 
     @PostMapping("/patches/{patchId}/comments")
-    public CommentDTO createComment(@PathVariable Long patchId, @RequestBody String texto, Authentication authentication) {
+    public CommentDTO createComment(@PathVariable Long patchId, @RequestBody CommentCreateDTO dto, Authentication authentication) {
         String email = authentication.getName();
         User user = userService.findUserByEmail(email); // busca o User completo
-        Comment comment = commentService.createComment(patchId, user, texto);
+        Comment comment = commentService.createComment(patchId, user, dto.getTexto());
         
-        CommentDTO dto = new CommentDTO();
-        dto.setId(comment.getId());
-        dto.setTexto(comment.getTexto());
-        dto.setAutorNome(comment.getUser().getNome());
-        dto.setCriadoEm(comment.getCriadoEm());
-        return dto;
+        CommentDTO response = new CommentDTO();
+        response.setId(comment.getId());
+        response.setTexto(comment.getTexto());
+        response.setAutorNome(comment.getUser().getNome());
+        response.setCriadoEm(comment.getCriadoEm());
+        return response;
     }
 
     @DeleteMapping("/comments/{id}")

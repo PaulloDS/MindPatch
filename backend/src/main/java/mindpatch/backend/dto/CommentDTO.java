@@ -13,12 +13,15 @@ public class CommentDTO {
     private Long id;
     private String texto;
     private String autorNome;
+    private Long autorId;
     private LocalDateTime criadoEm;
 
     public static CommentDTO fromEntity(Comment comment) {
         CommentDTO dto = new CommentDTO();
+        dto.setId(comment.getId());
         dto.setTexto(comment.getTexto());
         dto.setAutorNome(comment.getUser().getNome());
+        dto.setAutorId(comment.getUser().getId());
         dto.setCriadoEm(comment.getCriadoEm());
         return dto;
     }
