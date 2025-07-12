@@ -5,9 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Trash } from "lucide-react";
 import Image from "next/image";
 import { api } from "@/lib/axios";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import RichCommentEditor from "./RichCommentEditor";
 
 interface PatchDTO {
   id: number;
@@ -16,7 +28,10 @@ interface PatchDTO {
   tag?: string;
   visibilidade: string;
   descricao?: string;
-  autorNome: string;
+  autor: {
+    id: number;
+    nome: string;
+  };
   criadoEm: string; // string ISO
 }
 
@@ -25,6 +40,7 @@ interface CommentDTO {
   texto: string;
   autorNome: string;
   autorId: number;
+  patchAutorId: number;
   criadoEm: string;
 }
 
@@ -112,6 +128,22 @@ export default function FeedComunidade() {
     }
   }
 
+  async function excluirComentario(commentId: number, patchId: number) {
+    try {
+      await api.delete(`/comments/${commentId}`);
+      setCommentsMap((prev) => ({
+        ...prev,
+        [patchId]: prev[patchId]?.filter((c) => c.id !== commentId),
+      }));
+    } catch (err: any) {
+      alert(
+        err.response?.data?.message ||
+          err.message ||
+          "Erro ao excluir comentário"
+      );
+    }
+  }
+
   // Funções auxiliares para formatação de data
   function formatarData(isoString: string) {
     const dt = new Date(isoString);
@@ -124,8 +156,22 @@ export default function FeedComunidade() {
     });
   }
 
+  useEffect(() => {
+    async function carregarUsuario() {
+      try {
+        const res = await api.get("/auth/users/me"); // Ajuste para sua rota correta
+        setUserId(res.data.id); // considerando que o backend retorna o id do usuário autenticado
+      } catch (err) {
+        console.error("Erro ao carregar usuário logado", err);
+      }
+    }
+
+    carregarUsuario();
+    carregarPatchesPublicos();
+  }, []);
+
   return (
-    <Card className="bg-white/90 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 max-w-4xl mx-auto my-8">
+    <Card className="bg-white/90 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 mx-auto">
       <CardHeader className="border-b border-green-100/50">
         <CardTitle className="flex items-center gap-3">
           <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl shadow-lg">
@@ -170,7 +216,7 @@ export default function FeedComunidade() {
               <Avatar className="w-14 h-14 border-4 border-white shadow-xl ring-2 ring-green-100">
                 {/* Caso tenha avatar, usar AvatarImage, senão fallback com inicial */}
                 <AvatarFallback className="bg-gradient-to-r from-green-400 to-emerald-400 text-white font-bold text-lg">
-                  {patch.autorNome}
+                  {patch.autor.nome[0]}
                 </AvatarFallback>
               </Avatar>
 
@@ -180,7 +226,7 @@ export default function FeedComunidade() {
                 </h4>
                 <p className="text-sm text-gray-600">
                   Autor:{" "}
-                  <span className="font-semibold">{patch.autorNome}</span> •{" "}
+                  <span className="font-semibold">{patch.autor.nome}</span> •{" "}
                   {formatarData(patch.criadoEm)}
                 </p>
               </div>
@@ -227,29 +273,69 @@ export default function FeedComunidade() {
                 {commentsMap[patch.id]?.map((comment) => (
                   <div
                     key={comment.id}
-                    className="bg-gray-100 rounded-xl p-3 shadow-sm"
+                    className="bg-gray-100 rounded-xl p-3 shadow-sm relative"
                   >
                     <p className="text-gray-800 text-sm font-semibold">
                       {comment.autorNome}
                     </p>
-                    <p className="text-gray-700 text-sm">{comment.texto}</p>
+                    <div
+                      className="text-gray-700 text-sm prose"
+                      dangerouslySetInnerHTML={{ __html: comment.texto }}
+                    />
                     <p className="text-gray-500 text-xs mt-1">
                       {formatarData(comment.criadoEm)}
                     </p>
+
+                    {/* Botão de deletar se for autor do comentário ou do patch */}
+                    {(userId === comment.autorId ||
+                      userId === comment.patchAutorId) && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-2 right-2 bg-red-500 text-white hover:bg-red-800 hover:text-white cursor-pointer"
+                          >
+                            <Trash />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Tem certeza que deseja excluir?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta ação não poderá ser desfeita. O comentário
+                              será removido permanentemente.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="cursor-pointer bg-gray-300 hover:bg-gray-400">
+                              Cancelar
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                excluirComentario(comment.id, patch.id)
+                              }
+                              className="bg-red-600 hover:bg-red-800 cursor-pointer"
+                            >
+                              Confirmar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
                   </div>
                 ))}
 
                 {/* Form comentário */}
-                <div className="mt-2 flex gap-2">
-                  <textarea
-                    rows={2}
-                    className="flex-1 rounded-xl border border-gray-300 p-2 resize-none text-sm"
-                    placeholder="Escreva um comentário..."
-                    value={newComments[patch.id] || ""}
-                    onChange={(e) =>
+                <div className="mt-2 flex gap-2 w-full overflow-visible">
+                  <RichCommentEditor
+                    content={newComments[patch.id] || ""}
+                    onChange={(html) =>
                       setNewComments((prev) => ({
                         ...prev,
-                        [patch.id]: e.target.value,
+                        [patch.id]: html,
                       }))
                     }
                   />
