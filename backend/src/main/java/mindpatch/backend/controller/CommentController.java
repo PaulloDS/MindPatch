@@ -16,7 +16,6 @@ import mindpatch.backend.dto.CommentCreateDTO;
 import mindpatch.backend.dto.CommentDTO;
 import mindpatch.backend.model.Comment;
 import mindpatch.backend.model.User;
-import mindpatch.backend.repository.UserRepository;
 import mindpatch.backend.service.CommentService;
 import mindpatch.backend.service.UserService;
 
@@ -36,6 +35,8 @@ public class CommentController {
             dto.setId(comment.getId());
             dto.setTexto(comment.getTexto());
             dto.setAutorNome(comment.getUser().getNome());
+            dto.setAutorId(comment.getUser().getId());
+            dto.setPatchAutorId(comment.getPatch().getAutor().getId());
             dto.setCriadoEm(comment.getCriadoEm());
             return dto;
         }).collect(Collectors.toList());

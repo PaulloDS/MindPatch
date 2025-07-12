@@ -14,6 +14,7 @@ public class CommentDTO {
     private String texto;
     private String autorNome;
     private Long autorId;
+    private Long patchAutorId;
     private LocalDateTime criadoEm;
 
     public static CommentDTO fromEntity(Comment comment) {
@@ -22,6 +23,7 @@ public class CommentDTO {
         dto.setTexto(comment.getTexto());
         dto.setAutorNome(comment.getUser().getNome());
         dto.setAutorId(comment.getUser().getId());
+        dto.setPatchAutorId(comment.getPatch().getAutor().getId());
         dto.setCriadoEm(comment.getCriadoEm());
         return dto;
     }
