@@ -62,6 +62,8 @@ export default function FeedComunidade() {
 
   const [userId, setUserId] = useState<number | null>(null);
 
+  const [editorResetKey, setEditorResetKey] = useState<number>(0);
+
   useEffect(() => {
     carregarPatchesPublicos();
   }, []);
@@ -73,6 +75,10 @@ export default function FeedComunidade() {
       const res = await api.get("/patches/publicos");
       if (!res.data) throw new Error("Erro ao buscar patches públicos");
       setPatches(res.data);
+
+      for (const patch of res.data) {
+        carregarComentarios(patch.id);
+      }
     } catch (err: any) {
       setError(err.message || "Erro desconhecido");
     } finally {
@@ -119,6 +125,7 @@ export default function FeedComunidade() {
       }));
 
       setNewComments((prev) => ({ ...prev, [patchId]: "" }));
+      setEditorResetKey((prev) => prev + 1);
     } catch (err: any) {
       alert(
         err.response?.data?.message ||
@@ -326,8 +333,9 @@ export default function FeedComunidade() {
                 ))}
 
                 {/* Form comentário */}
-                <div className="mt-2 flex gap-2 w-full overflow-visible">
+                <div className="mt-2 relative w-full">
                   <RichCommentEditor
+                    key={`editor-${patch.id}-${editorResetKey}`}
                     content={newComments[patch.id] || ""}
                     onChange={(html) =>
                       setNewComments((prev) => ({
@@ -335,6 +343,12 @@ export default function FeedComunidade() {
                         [patch.id]: html,
                       }))
                     }
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        enviarComentario(patch.id);
+                      }
+                    }}
                   />
                   <Button
                     onClick={() => enviarComentario(patch.id)}
@@ -342,6 +356,7 @@ export default function FeedComunidade() {
                       !newComments[patch.id] ||
                       newComments[patch.id].trim() === ""
                     }
+                    className="absolute bottom-2 right-2 text-sm px-3 py-1"
                   >
                     Enviar
                   </Button>

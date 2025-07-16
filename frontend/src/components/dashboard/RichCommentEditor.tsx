@@ -12,9 +12,11 @@ import data from "@emoji-mart/data";
 export default function RichCommentEditor({
   value,
   onChange,
+  onKeyDown,
 }: {
   value: string;
   onChange: (content: string) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -75,7 +77,11 @@ export default function RichCommentEditor({
         </div>
       )}
 
-      <EditorContent editor={editor} className="min-h-[50px] relative" />
+      <EditorContent
+        editor={editor}
+        className="min-h-[50px] relative"
+        onKeyDown={onKeyDown}
+      />
     </div>
   );
 }
