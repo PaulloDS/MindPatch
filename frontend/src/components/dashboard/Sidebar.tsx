@@ -27,6 +27,7 @@ import { Progress } from "../ui/progress";
 import { useSidebar } from "@/context/SidebarContext";
 import { useUser } from "@/hooks/useUser";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useSidebar();
@@ -38,6 +39,7 @@ export default function Sidebar() {
   });
   const { user, loading } = useUser();
   const pathname = usePathname();
+  const router = useRouter();
 
   if (loading) return <p>Carregando...</p>;
 
@@ -74,18 +76,15 @@ export default function Sidebar() {
     aprendizado: [
       { name: "Aprender", href: "/aprender", icon: Book, current: false },
     ],
-    comunidade: [
-      {
-        name: "Comunidade",
-        href: "/dashboard/community",
-        current: false,
-      },
-      {
-        name: "Conquistas",
-        href: "/dashboard/achievements",
-        current: false,
-      },
-    ],
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/logout", {
+      method: "POST",
+      credentials: "include", // necessário para enviar cookies
+    });
+
+    router.push("/auth/sign-in");
   };
 
   return (
@@ -276,7 +275,10 @@ export default function Sidebar() {
                 <HelpCircle className="w-5 h-5" />
                 <span className="font-medium">Ajuda</span>
               </Link>
-              <button className="w-[50%] flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-200 transition-all duration-300">
+              <button
+                className="w-[50%] flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-200 transition-all duration-300"
+                onClick={() => handleLogout()}
+              >
                 <LogOut className="w-5 h-5" />
                 <span className="font-medium">Sair</span>
               </button>
