@@ -118,7 +118,7 @@ export default function Sidebar() {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                DevJourney
+                MindPatch
               </span>
             </Link>
             <Button
@@ -134,7 +134,7 @@ export default function Sidebar() {
           {/* User Profile */}
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center gap-4 mb-4">
-              <Avatar className="w-12 h-12 border-2 border-blue-200 rounded-full overflow-hidden">
+              <Avatar className="w-12 h-12 border-2 border-blue-200 rounded-full overflow-hidden flex items-center justify-center">
                 <AvatarImage src={"/placeholder.svg"} />
                 <AvatarFallback>{user.nome[0]}</AvatarFallback>
               </Avatar>

@@ -10,6 +10,8 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
+  Trophy,
+  BookOpen,
 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -19,26 +21,26 @@ export default function Carousel() {
 
   const slides = [
     {
-      title: "Schedule In Calendar",
+      title: "Crie Seus Patches",
       subtitle:
-        "Generate calendar using advanced AI models. Explore workflow possibilities and bring your ideas to life in calendar.",
-      buttonText: "Go To Calendar",
-      buttonIcon: Calendar,
-      bgGradient: "from-emerald-400 to-emerald-500",
+        "Capture e organize tudo que você aprendeu criando patches personalizados para revisitar sempre que precisar.",
+      buttonText: "Criar Patch",
+      buttonIcon: BookOpen, // ou algum ícone que tenha a ver
+      bgGradient: "from-green-400 to-green-500",
     },
     {
-      title: "Smart Task Management",
+      title: "Desafios para Evoluir",
       subtitle:
-        "Organize your tasks efficiently with AI-powered suggestions and intelligent scheduling.",
-      buttonText: "Manage Tasks",
-      buttonIcon: Target,
-      bgGradient: "from-blue-400 to-blue-500",
+        "Teste suas habilidades com desafios práticos e eleve seu aprendizado a um novo nível.",
+      buttonText: "Começar Desafios",
+      buttonIcon: Trophy,
+      bgGradient: "from-yellow-400 to-yellow-500",
     },
     {
-      title: "Team Collaboration",
+      title: "Compartilhe com a Comunidade",
       subtitle:
-        "Connect with your team seamlessly. Share calendars and coordinate meetings.",
-      buttonText: "Join Team",
+        "Mostre seus patches, troque conhecimento e aprenda com outros desenvolvedores apaixonados.",
+      buttonText: "Explorar Comunidade",
       buttonIcon: Users,
       bgGradient: "from-purple-400 to-purple-500",
     },
