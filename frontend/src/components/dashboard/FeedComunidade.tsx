@@ -53,41 +53,52 @@ export default function FeedComunidade() {
   const [commentsMap, setCommentsMap] = useState<Record<number, CommentDTO[]>>(
     {}
   );
-  // Controla se o form de comentário está aberto para um patch
+  // Controle de formulário de comentário aberto
   const [commentFormsOpen, setCommentFormsOpen] = useState<
     Record<number, boolean>
   >({});
-  // Texto dos comentários sendo escritos
+  // Texto de novos comentários
   const [newComments, setNewComments] = useState<Record<number, string>>({});
-
+  // Usuário logado
   const [userId, setUserId] = useState<number | null>(null);
-
+  // Reset do editor
   const [editorResetKey, setEditorResetKey] = useState<number>(0);
 
+  // Primeiro useEffect: carregar usuário e patches
   useEffect(() => {
-    carregarPatchesPublicos();
+    async function inicializar() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // 1. Carrega usuário logado
+        const userRes = await api.get("/auth/users/me");
+        const uid = userRes.data.id;
+        setUserId(uid);
+
+        // 2. Carrega patches públicos
+        const patchesRes = await api.get("/patches/publicos");
+        const patchesData = patchesRes.data;
+        if (!patchesData) throw new Error("Erro ao buscar patches públicos");
+
+        setPatches(patchesData);
+
+        // 3. Carrega comentários para cada patch
+        for (const patch of patchesData) {
+          carregarComentarios(patch.id);
+        }
+      } catch (err: any) {
+        setError(err.message || "Erro desconhecido");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    inicializar();
   }, []);
 
-  async function carregarPatchesPublicos() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await api.get("/patches/publicos");
-      if (!res.data) throw new Error("Erro ao buscar patches públicos");
-      setPatches(res.data);
-
-      for (const patch of res.data) {
-        carregarComentarios(patch.id);
-      }
-    } catch (err: any) {
-      setError(err.message || "Erro desconhecido");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   async function carregarComentarios(patchId: number) {
-    if (commentsMap[patchId]) return; // Já carregado
+    if (commentsMap[patchId]) return; // Evita recarregar se já existem
     try {
       const res = await api.get(`/patches/${patchId}/comments`);
       if (!res.data) throw new Error("Erro ao carregar comentários");
@@ -113,9 +124,13 @@ export default function FeedComunidade() {
 
     try {
       const res = await api.post(`/patches/${patchId}/comments`, { texto });
-      // Axios já converte JSON automaticamente e já coloca header Content-Type
 
-      const novoComentario = res.data;
+      // Garante que autorId e patchAutorId estejam presentes
+      const novoComentario: CommentDTO = {
+        ...res.data,
+        autorId: userId!, // força pois já foi carregado no useEffect
+        patchAutorId: patchId,
+      };
 
       setCommentsMap((prev) => ({
         ...prev,
@@ -151,7 +166,7 @@ export default function FeedComunidade() {
     }
   }
 
-  // Funções auxiliares para formatação de data
+  // Utilitário de formatação de data
   function formatarData(isoString: string) {
     const dt = new Date(isoString);
     return dt.toLocaleString("pt-BR", {
@@ -162,20 +177,6 @@ export default function FeedComunidade() {
       minute: "2-digit",
     });
   }
-
-  useEffect(() => {
-    async function carregarUsuario() {
-      try {
-        const res = await api.get("/auth/users/me"); // Ajuste para sua rota correta
-        setUserId(res.data.id); // considerando que o backend retorna o id do usuário autenticado
-      } catch (err) {
-        console.error("Erro ao carregar usuário logado", err);
-      }
-    }
-
-    carregarUsuario();
-    carregarPatchesPublicos();
-  }, []);
 
   return (
     <Card className="bg-white/90 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 mx-auto">
