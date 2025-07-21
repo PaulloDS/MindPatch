@@ -158,7 +158,7 @@ export default function LoginPage() {
                 </motion.div>
                 <div>
                   <span className="text-3xl font-bold bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                    DevJourney
+                    MindPatch
                   </span>
                   <div className="text-sm text-gray-500 font-medium">
                     Sua jornada dev começa aqui
@@ -196,7 +196,7 @@ export default function LoginPage() {
                 >
                   <Button
                     variant="outline"
-                    className="w-full h-12 bg-gray-900 text-white border-0 hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="w-full h-12 bg-gray-900 text-white border-0 cursor-pointer hover:text-white hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     <Github className="w-5 h-5 mr-3" />
                     Continuar com GitHub
@@ -205,14 +205,14 @@ export default function LoginPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       variant="outline"
-                      className="h-12 bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
+                      className="h-12 bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg cursor-pointer"
                     >
                       <Mail className="w-5 h-5 mr-2 text-red-500" />
                       Google
                     </Button>
                     <Button
                       variant="outline"
-                      className="h-12 bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
+                      className="h-12 bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg cursor-pointer"
                     >
                       <Discord className="w-5 h-5 mr-2 text-green-500" />
                       Discord
