@@ -1,6 +1,7 @@
 package mindpatch.backend.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public class Patch {
 	private Set<Tag> tags;
 	
 	@OneToMany(mappedBy = "patch")
-	private List<Comment> comentarios;
+	private List<Comment> comentarios = new ArrayList<>();
 	
 	@CreationTimestamp
 	private LocalDateTime criadoEm;

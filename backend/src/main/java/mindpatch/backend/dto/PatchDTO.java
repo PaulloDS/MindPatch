@@ -1,7 +1,9 @@
 package mindpatch.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
@@ -48,9 +50,11 @@ public class PatchDTO {
             .collect(Collectors.toList());
         dto.setTags(tagDTOs);
 
-        List<CommentDTO> commentDTOs = patch.getComentarios().stream()
-            .map(CommentDTO::fromEntity)
-            .collect(Collectors.toList());
+List<CommentDTO> commentDTOs = Optional.ofNullable(patch.getComentarios())
+    .orElse(Collections.emptyList())
+    .stream()
+    .map(CommentDTO::fromEntity)
+    .toList();
         dto.setComentarios(commentDTOs);
 
 
