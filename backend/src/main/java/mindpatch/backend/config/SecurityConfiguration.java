@@ -31,11 +31,10 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/auth/login", // Url que usaremos para fazer login
-            "/auth/register" // Url que usaremos para criar um usuário
+            "/auth/login",
+            "/auth/register"
     };
 
-    // Endpoints que requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
         "/auth/users/{id}",
         "/auth/users/me",
@@ -54,7 +53,6 @@ public class SecurityConfiguration {
         "/comments/{id}"
     };
 
-    // Endpoints que só podem ser acessados por usuários com permissão de administrador
     public static final String[] ENDPOINTS_ADMIN = {
         "/auth/users",
         "/patches/todos",
@@ -64,7 +62,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf().disable()
-                .cors() // ATIVA O CORS
+                .cors()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -94,7 +92,7 @@ public class SecurityConfiguration {
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // importante para cookies / Authorization
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

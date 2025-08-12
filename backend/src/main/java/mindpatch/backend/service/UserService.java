@@ -56,26 +56,19 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuário com id " + id + " não encontrado"));
     }
 
-
-    // Método responsável por autenticar um usuário e retornar um token JWT
     public RecoveryJwtTokenDTO authenticateUser(LoginUserDTO loginUserDTO) {
-        // Cria um objeto de autenticação com email e a senha do usuário
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
             new UsernamePasswordAuthenticationToken(loginUserDTO.email(), loginUserDTO.password());
 
-        // Autentica o usuário com as credenciais fornecidas
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-        // Obtém o objeto UserDetails do usuário autenticado
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         User user = userDetails.getUser();
 
-        // Gera um token JWT para o usuário autenticado
         return new RecoveryJwtTokenDTO(jwtTokenService.generateToken(userDetails), user.getId(), user.getNome(), user.getEmail());
     }
 
-    // Método responsável por criar um usuário
     public void createUser(CreateUserDTO createUserDto) {
 
         if (userRepository.existsByEmail(createUserDto.getEmail())) {
@@ -85,30 +78,23 @@ public class UserService {
         Role rolePadrao = roleRepository.findByName(RoleName.ROLE_CUSTOMER)
                 .orElseThrow(() -> new RuntimeException("Cargo não encontrado"));
 
-        // Cria um novo usuário com os dados fornecidos
         User newUser = User.builder()
                 .nome(createUserDto.getNome())
                 .email(createUserDto.getEmail())
-                // Codifica a senha do usuário com o algoritmo bcrypt
                 .senhaHash(securityConfiguration.passwordEncoder().encode(createUserDto.getPassword()))
-                // Atribui ao usuário uma permissão específica
                 .roles(List.of(rolePadrao))
                 .build();
 
-        // Salva o novo usuário no banco de dados
         userRepository.save(newUser);
     }
 
-    // Método para recuperar dados do usuário
     public UserProfileDTO getUserProfileById(Long id) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
 
-        // Converter User para DTO, incluindo patches e badges
         return UserProfileDTO.fromEntity(user);
     }
 
-    // Método para atualizar detalhes do usuário
     public UserUpdateDTO atualizarUsuario(Long id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
@@ -123,7 +109,6 @@ public class UserService {
 
         user.setEmail(userUpdateDTO.getEmail());
 
-        // Se a senha for enviada, atualiza
         if (userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
             String senhaHash = passwordEncoder.encode(userUpdateDTO.getPassword());
             userUpdateDTO.setPassword(senhaHash);
@@ -138,14 +123,12 @@ public class UserService {
         return dto;
     }
 
-    // Método para deletar usuário
     public void deletarUsuario(Long id) {
         User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         userRepository.delete(user);
     }
 
-    // Método para listar conquistas
     public List<BadgeDTO> listarConquistas(Long userId) {
         User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

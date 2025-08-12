@@ -60,8 +60,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    // Rota para recuperar os dados do próprio perfil
-    // Somente ADMIN pode recuperar dados de qualquer usuário
     @GetMapping("/users/{id}")
     public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id, Authentication authentication) {
 
@@ -94,8 +92,6 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-    // Rota para atualizar os dados do próprio perfil
-    // Somente ADMIN pode atualizar os dados de qualquer usuário
     @PutMapping("/users/{id}")
     public ResponseEntity<UserUpdateDTO> updateUserProfile(@PathVariable Long id, @RequestBody UserUpdateDTO userUpdateDTO, Authentication authentication ) {
 
@@ -115,8 +111,6 @@ public class UserController {
         return ResponseEntity.ok(userProfileAtualizado);
     }
 
-    // Rota para deletar usuários
-    // Somente ADMIN pode deletar
     @DeleteMapping("/users/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
@@ -133,8 +127,6 @@ public class UserController {
             .collect(Collectors.toList());
     }
 
-    // Rota para listar as conquistas do próprio usuário
-    // Somente ADMIN pode listar as conquistas de qualquer usuário
     @GetMapping("/users/{id}/conquistas")
     public ResponseEntity<List<BadgeDTO>> listarConsquistas(@PathVariable Long id, Authentication authentication ) {
 

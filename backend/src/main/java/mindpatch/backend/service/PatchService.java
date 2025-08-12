@@ -175,7 +175,7 @@ public class PatchService {
         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
     Specification<Patch> spec = Specification.where((root, query, cb) -> 
-        cb.equal(root.get("autor").get("id"), usuario.getId()) // apenas do usuário
+        cb.equal(root.get("autor").get("id"), usuario.getId())
     );
 
     if (titulo != null && !titulo.isEmpty()) {
