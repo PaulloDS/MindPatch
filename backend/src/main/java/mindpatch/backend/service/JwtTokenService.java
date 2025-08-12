@@ -17,7 +17,7 @@ import mindpatch.backend.service.impl.UserDetailsImpl;
 @Service
 public class JwtTokenService {
 
-    private static final String SECRET_KEY = "4Z^XrroxR@dWxqf$mTTKwW$!@#qGr4P";
+    private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
 
     private static final String ISSUER = "pizzurg-api";
 
