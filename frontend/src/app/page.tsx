@@ -28,9 +28,6 @@ export default function Home() {
                 />
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                DevJourney
-              </span>
             </div>
 
             <div className="hidden md:block">

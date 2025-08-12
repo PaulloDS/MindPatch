@@ -10,9 +10,6 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <Image src="/logo-2.png" width={40} height={40} alt="Logo" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                DevJourney
-              </span>
             </div>
             <p className="text-gray-400 mb-6 max-w-md">
               Transformando a forma como desenvolvedores aprendem e evoluem.
