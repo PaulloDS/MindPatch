@@ -3,7 +3,6 @@ package mindpatch.backend.service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class JwtTokenService {
 
     public String generateToken(UserDetailsImpl user) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
             return JWT.create()
                         .withIssuer(ISSUER) 
                         .withIssuedAt(creationDate())
@@ -41,7 +40,7 @@ public class JwtTokenService {
     public String getSubjectFromToken(String token) {
         try {
         
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
             return JWT.require(algorithm)
                         .withIssuer(ISSUER)
                         .build()
