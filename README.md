@@ -1,3 +1,6 @@
+
+<img src="https://i.imgur.com/OF8IN6p.png"/>
+
 # 🧠 MindPatch
 
 O **MindPatch** é uma plataforma projetada para registrar e compartilhar soluções de código, chamadas **Patches**, que funcionam como anotações técnicas inteligentes.  
