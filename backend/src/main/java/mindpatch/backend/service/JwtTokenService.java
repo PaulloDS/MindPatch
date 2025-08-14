@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
@@ -17,7 +18,8 @@ import mindpatch.backend.service.impl.UserDetailsImpl;
 @Service
 public class JwtTokenService {
 
-    private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
+    @Value("${jwt.secret.key}")
+    private String secretKey;
 
     private static final String ISSUER = "pizzurg-api";
 
