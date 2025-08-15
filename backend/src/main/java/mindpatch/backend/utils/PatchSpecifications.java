@@ -16,7 +16,6 @@ public class PatchSpecifications {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!isAdmin) {
-                // Visibilidade publica OU autor do patch (comparar email)
                 Predicate publico = cb.equal(root.get("visibilidade"), Visibilidade.PUBLICO);
                 Predicate autorDoPatch = cb.equal(root.get("autor").get("email"), emailUsuario);
                 predicates.add(cb.or(publico, autorDoPatch));
