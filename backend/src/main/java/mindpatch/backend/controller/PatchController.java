@@ -68,7 +68,7 @@ public class PatchController {
         @RequestParam(required = false) String visibilidade,
         Authentication auth
     ) {
-        String email = (auth != null) ? auth.getName() : ""; // permite busca anônima
+        String email = (auth != null) ? auth.getName() : "";
         List<PatchDTO> resultados = patchService.buscarPorFiltros(titulo, codigo, autor, tag, visibilidade, email);
         return ResponseEntity.ok(resultados);
     }

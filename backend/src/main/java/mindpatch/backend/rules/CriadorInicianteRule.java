@@ -39,7 +39,7 @@ public class CriadorInicianteRule implements BadgeRule {
                     .orElseThrow(() -> new RuntimeException("Badge não encontrada"));
 
             user.adicionarBadge(badge);
-            userBadgeRepository.save(new UserBadge(user, badge, null)); // 🚨 Persistir explicitamente aqui
+            userBadgeRepository.save(new UserBadge(user, badge, null));
 
             System.out.println("🏆 [Regra] Badge atribuída com sucesso!");
         }

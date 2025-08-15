@@ -69,7 +69,6 @@ public class User {
 	private List<UserBadge> conquistas;
 
 	public void adicionarBadge(Badge badge) {
-		// Evita duplicatas
 		boolean jaTem = this.conquistas.stream()
 			.anyMatch(ub -> ub.getUser().getId().equals(this.getId())
 						&& ub.getBadge().getId().equals(badge.getId()));

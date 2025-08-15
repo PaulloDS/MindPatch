@@ -44,10 +44,10 @@ public class UserController {
         RecoveryJwtTokenDTO token = userService.authenticateUser(loginUserDTO);
 
         Cookie cookie = new Cookie("jwt", token.token());
-        cookie.setHttpOnly(true); // Proteje contra JS
-        cookie.setSecure(false); // true se for HTTPS
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
-        cookie.setMaxAge(1 * 24 * 60 * 60); // 1 dia
+        cookie.setMaxAge(1 * 24 * 60 * 60);
 
         response.addCookie(cookie);
 
@@ -118,8 +118,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    // Rota para listar todos os usuários
-    // Somente ADMIN tem esse poder
     @GetMapping("/users")
     public List<UserProfileDTO> getAllUsers() {
         return userRepository.findAll().stream()

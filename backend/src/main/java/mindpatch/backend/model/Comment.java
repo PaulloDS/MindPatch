@@ -25,7 +25,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // <- Corrigido aqui
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "patch_id", nullable = false)

@@ -45,7 +45,7 @@ public class CommentController {
     @PostMapping("/patches/{patchId}/comments")
     public CommentDTO createComment(@PathVariable Long patchId, @RequestBody CommentCreateDTO dto, Authentication authentication) {
         String email = authentication.getName();
-        User user = userService.findUserByEmail(email); // busca o User completo
+        User user = userService.findUserByEmail(email);
         Comment comment = commentService.createComment(patchId, user, dto.getTexto());
         
         CommentDTO response = new CommentDTO();
