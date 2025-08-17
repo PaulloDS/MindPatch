@@ -171,13 +171,32 @@ export default function CardPatches({ patch }: CardPatchesProps) {
                 <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
                   {item.comentarios.map((comentario, index) => {
                     let textoFinal = comentario.texto;
+                    let isHtml = false;
+
                     try {
                       const parsed = JSON.parse(comentario.texto);
-                      if (parsed.texto) textoFinal = parsed.texto;
-                    } catch (_) {}
+                      if (parsed.texto) {
+                        textoFinal = parsed.texto;
+                      }
+                    } catch (_) {
+                      // se não for JSON, pode ser HTML ou texto normal
+                    }
+
+                    // checa se parece HTML (bem simples)
+                    if (/<[a-z][\s\S]*>/i.test(textoFinal)) {
+                      isHtml = true;
+                    }
+
                     return (
                       <div key={index} className="bg-gray-100 rounded-md p-2">
-                        <p className="text-sm text-gray-800">{textoFinal}</p>
+                        {isHtml ? (
+                          <p
+                            className="text-sm text-gray-800"
+                            dangerouslySetInnerHTML={{ __html: textoFinal }}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-800">{textoFinal}</p>
+                        )}
                         <div className="text-xs text-gray-500 mt-1 flex justify-between">
                           <span>👤 {comentario.autorNome}</span>
                           <span>

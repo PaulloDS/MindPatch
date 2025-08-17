@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true,
+  experimental: {
+    reactRemoveOverlay: true, // 🔥 remove o Dev Overlay
+  },
 };
 
 export default nextConfig;

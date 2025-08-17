@@ -1,10 +1,16 @@
 // components/PatchDeleteDialog.tsx
 "use client";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export function DeletePatche({
   patchId,
@@ -32,10 +38,17 @@ export function DeletePatche({
         <Button className="bg-red-600 hover:bg-red-700">🗑️ Apagar</Button>
       </DialogTrigger>
       <DialogContent>
+        <VisuallyHidden>
+          <DialogTitle>Apagar Patch</DialogTitle>
+        </VisuallyHidden>
         <div className="space-y-4">
           <p>Tem certeza que deseja apagar este patch?</p>
           <div className="flex justify-between">
-            <Button onClick={() => setOpen(false)} variant="outline" className="bg-gray-400">
+            <Button
+              onClick={() => setOpen(false)}
+              variant="outline"
+              className="bg-gray-400"
+            >
               Cancelar
             </Button>
             <Button

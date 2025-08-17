@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
@@ -59,6 +59,9 @@ export default function LoginPage() {
   const { register, handleSubmit } = useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [positions, setPositions] = useState<{ left: string; top: string }[]>(
+    []
+  );
 
   const onSubmit = async (data: any) => {
     try {
@@ -86,6 +89,15 @@ export default function LoginPage() {
     }
   };
 
+  useEffect(() => {
+    // gera posições apenas no cliente
+    const generated = [...Array(20)].map(() => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+    setPositions(generated);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
       {/* Animated Background */}
@@ -98,10 +110,11 @@ export default function LoginPage() {
 
         {/* Floating Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(20)].map((_, i) => (
+          {positions.map((pos, i) => (
             <motion.div
               key={i}
               className="absolute w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full opacity-20"
+              style={pos}
               animate={{
                 x: [0, 100, 0],
                 y: [0, -100, 0],
@@ -111,10 +124,6 @@ export default function LoginPage() {
                 duration: 10 + i * 2,
                 repeat: Number.POSITIVE_INFINITY,
                 delay: i * 0.5,
-              }}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
               }}
             />
           ))}

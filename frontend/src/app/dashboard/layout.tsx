@@ -24,7 +24,7 @@ export default function DashboardLayout({
     <ProtectedRoute>
       <SidebarProvider>
         <div
-          className={`min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 ${inter.variable}`}
+          className={`min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 ${inter.variable} suppressHydrationWarning`}
         >
           <ClientLayout>{children}</ClientLayout>
         </div>

@@ -1,11 +1,17 @@
 // components/PatchEditDialog.tsx
 "use client";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import { Switch } from "../ui/switch";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type Tag = {
   id: number;
@@ -65,6 +71,9 @@ export function EditPatche({
         <Button>✏️ Editar</Button>
       </DialogTrigger>
       <DialogContent className="bg-gradient-to-br from-gray-200 to-emerald-100">
+        <VisuallyHidden>
+          <DialogTitle>Editar Patch</DialogTitle>
+        </VisuallyHidden>
         <div className="space-y-3 py-5">
           <input
             className="w-full border p-2 px-4 rounded-xl border-emerald-700"

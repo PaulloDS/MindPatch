@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import { Switch } from "../ui/switch";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 type Tag = {
   id: number;
@@ -62,6 +64,9 @@ export function CreatePatche({ onCreated }: { onCreated: () => void }) {
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-gradient-to-br from-gray-200 to-emerald-100">
+        <VisuallyHidden>
+          <DialogTitle>Apagar Patch</DialogTitle>
+        </VisuallyHidden>
         <div className="space-y-3 py-5">
           <input
             className="w-full border py-2 px-4 rounded-xl border-emerald-700"

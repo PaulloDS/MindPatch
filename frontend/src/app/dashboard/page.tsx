@@ -15,7 +15,7 @@ import { useEffect } from "react";
 
 export default function DashboardPage() {
   return (
-    <main className="lg:pl-80">
+    <main className="lg:pl-80 suppressHydrationWarning">
       <div className="mb-5 flex justify-between gap-5">
         <Carousel />
         <div className="w-[35%] ">

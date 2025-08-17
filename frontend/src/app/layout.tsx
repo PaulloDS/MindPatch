@@ -20,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={`${inter.variable} antialiased`}>
+      <body
+        className={`${inter.variable} antialiased`}
+        suppressHydrationWarning
+      >
         {children}
         <Toaster />
       </body>
