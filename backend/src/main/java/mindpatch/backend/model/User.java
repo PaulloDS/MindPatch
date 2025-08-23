@@ -82,4 +82,7 @@ public class User {
 		this.conquistas.add(userBadge);
 	}
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<UserChallenge> challenges;
+
 }
