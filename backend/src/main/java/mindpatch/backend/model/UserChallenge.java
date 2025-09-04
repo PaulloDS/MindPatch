@@ -2,6 +2,7 @@ package mindpatch.backend.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -42,5 +43,30 @@ public class UserChallenge {
     private StatusChallenge status;
 
     private LocalDateTime dataConclusao;
+
+    @Column(nullable = false)
+    private Double taxaConclusao = 0.0;
+
+    public void atualizarProgresso(){
+
+        if (challenge.getTarefas() == null || challenge.getTarefas().isEmpty()) {
+            this.taxaConclusao = 0.0;
+            return;
+        }
+
+        long concluidas = challenge.getTarefas().stream()
+                        .filter(Tarefa::isConcluida)
+                        .count();
+        this.taxaConclusao = (concluidas * 100.0) / challenge.getTarefas().size();
+
+        if (this.taxaConclusao == 100.0) {
+            this.status = StatusChallenge.CONCLUIDO;
+            this.dataConclusao = LocalDateTime.now();
+        } else if (this.taxaConclusao > 0) {
+            this.status = StatusChallenge.EM_ANDAMENTO;
+        } else  {
+            this.status = StatusChallenge.PENDENTE;
+        }
+    }
 
 }
