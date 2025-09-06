@@ -85,4 +85,11 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<UserChallenge> challenges;
 
+	@Column(nullable = false)
+	private Integer pontos = 0;
+
+	public void adicionarPontos(int pontos) {
+		this.pontos += pontos;
+	}
+
 }
