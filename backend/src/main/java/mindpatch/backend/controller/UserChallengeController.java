@@ -26,39 +26,16 @@ import mindpatch.backend.service.UserService;
 @RequiredArgsConstructor
 public class UserChallengeController {
 
-    private final UserService userService;
-    private final ChallengeService challengeService;
     private final UserChallengeService userChallengeService;
 
-    @PostMapping("/atribuir/{userId}/{challengeId}")
-    public ResponseEntity<UserChallenge> atribuirDesafio(@PathVariable Long userId, @PathVariable Long challengeId){
-        
-        User user = userService.findById(userId)
-        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        Challenge challenge = challengeService.buscarPorId(userId)
-        .orElseThrow(() -> new RuntimeException("Desafio não encontrado!"));
-
-        return ResponseEntity.ok(userChallengeService.atribuirDesafio(user, challenge));
-
-    }
-
-    @PutMapping("/{userChallengeId}/status")
-    public ResponseEntity<UserChallenge> atualizarStatus(@PathVariable Long userChallengeId, @RequestParam StatusChallenge status) {
-
-        UserChallenge userChallenge = userChallengeService.listarDesafiosDoUsuario(userChallengeId)
-            .stream()
-            .filter(ud -> ud.getId().equals(userChallengeId))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("UserChallenge não encontrado!"));
-
-        return ResponseEntity.ok(userChallengeService.atualizarStatus(userChallenge, status));
-
+    @PostMapping("/{userId}/{challengeId}")
+    public ResponseEntity<UserChallenge> iniciar(@PathVariable Long userId, @PathVariable Long challengeId) {
+        return ResponseEntity.ok(userChallengeService.iniciarDesafio(userId, challengeId));
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<UserChallenge>> listarDesafios(@PathVariable Long userId) {
-        return ResponseEntity.ok(userChallengeService.listarDesafiosDoUsuario(userId));
+    public ResponseEntity<List<UserChallenge>> listar(@PathVariable Long userId) {
+        return ResponseEntity.ok(userChallengeService.listarDesafiosUsuario(userId));
     }
 
 }
