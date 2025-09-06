@@ -40,7 +40,7 @@ public class UserChallenge {
     private Challenge challenge;
 
     @Enumerated(EnumType.STRING)
-    private StatusChallenge status;
+    private StatusChallenge status = StatusChallenge.PENDENTE;
 
     private LocalDateTime dataConclusao;
 
