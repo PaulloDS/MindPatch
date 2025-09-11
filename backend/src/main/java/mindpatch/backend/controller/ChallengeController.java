@@ -34,4 +34,15 @@ public class ChallengeController {
         return ResponseEntity.ok(challengeService.criarChallenge(dto));
     }
 
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<Challenge>> buscarPorTags(
+            @RequestParam List<String> tags,
+            @RequestParam(defaultValue = "any") String match
+    ) {
+        boolean todas = match.equalsIgnoreCase("all");
+        List<Challenge> resultados = challengeService.buscarPorTags(tags, todas);
+        return ResponseEntity.ok(resultados);
+    }
+
 }
