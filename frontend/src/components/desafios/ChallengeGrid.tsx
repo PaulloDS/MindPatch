@@ -1,105 +1,47 @@
+"use client";
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Zap, Clock, Users, Star, Code, Target, Flame } from "lucide-react";
+import { useEffect, useState } from "react";
+
+interface Challenge {
+  id: number;
+  titulo: string;
+  descricao: string;
+  dificuldade: string;
+  linguagem: string;
+  pontos: number;
+  tempoEstimado: number;
+  tags: string[];
+  categoria?: string;
+  taxaConclusao?: number; // progresso do usuário (vem direto do UserChallenge)
+  status?: string;
+  featured?: boolean;
+  trending?: boolean;
+}
 
 export default function ChallengeGrid() {
-  // TODO: buscar desafios paginados   GET /api/challenges?...
-  const challenges = [
-    {
-      id: 1,
-      title: "Two Sum Problem",
-      description:
-        "Encontre dois números em um array que somem um valor específico",
-      difficulty: "Fácil",
-      language: "JavaScript",
-      xp: 150,
-      participants: 2847,
-      completionRate: 78,
-      estimatedTime: "20 min",
-      tags: ["Arrays", "Hash Table"],
-      trending: true,
-      featured: false,
-      category: "Algoritmos",
-    },
-    {
-      id: 2,
-      title: "Binary Tree Traversal",
-      description:
-        "Implemente diferentes métodos de percorrimento em árvore binária",
-      difficulty: "Médio",
-      language: "Python",
-      xp: 250,
-      participants: 1923,
-      completionRate: 45,
-      estimatedTime: "45 min",
-      tags: ["Tree", "DFS", "BFS"],
-      trending: false,
-      featured: true,
-      category: "Estruturas de Dados",
-    },
-    {
-      id: 3,
-      title: "LRU Cache Implementation",
-      description: "Design e implementação de um cache LRU eficiente",
-      difficulty: "Difícil",
-      language: "Java",
-      xp: 350,
-      participants: 856,
-      completionRate: 23,
-      estimatedTime: "75 min",
-      tags: ["Design", "Hash Table", "Linked List"],
-      trending: true,
-      featured: true,
-      category: "System Design",
-    },
-    {
-      id: 4,
-      title: "Valid Parentheses",
-      description: "Verifique se uma string de parênteses é válida",
-      difficulty: "Fácil",
-      language: "C++",
-      xp: 120,
-      participants: 3456,
-      completionRate: 85,
-      estimatedTime: "15 min",
-      tags: ["Stack", "String"],
-      trending: false,
-      featured: false,
-      category: "Algoritmos",
-    },
-    {
-      id: 5,
-      title: "Merge K Sorted Lists",
-      description: "Combine k listas ordenadas em uma única lista ordenada",
-      difficulty: "Difícil",
-      language: "Python",
-      xp: 400,
-      participants: 1234,
-      completionRate: 18,
-      estimatedTime: "90 min",
-      tags: ["Linked List", "Divide and Conquer", "Heap"],
-      trending: true,
-      featured: false,
-      category: "Algoritmos",
-    },
-    {
-      id: 6,
-      title: "React Component Optimization",
-      description: "Otimize performance de componentes React",
-      difficulty: "Médio",
-      language: "TypeScript",
-      xp: 280,
-      participants: 2156,
-      completionRate: 52,
-      estimatedTime: "60 min",
-      tags: ["React", "Performance", "Hooks"],
-      trending: false,
-      featured: true,
-      category: "Frontend",
-    },
-  ];
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchChallenges() {
+      try {
+        const userId = 1;
+        const res = await fetch(`/challenges?userId=${userId}`);
+        const data = await res.json();
+        setChallenges(data);
+      } catch (err) {
+        console.error("Erro ao buscar desafios: ", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchChallenges();
+  }, []);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -145,6 +87,7 @@ export default function ChallengeGrid() {
         return "bg-gray-500";
     }
   };
+  if (loading) return <div>Carregando desafios...</div>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -174,25 +117,25 @@ export default function ChallengeGrid() {
               </div>
               <div
                 className={`w-3 h-3 rounded-full ${getCategoryColor(
-                  challenge.category
+                  challenge.categoria
                 )} opacity-60`}
-                title={challenge.category}
+                title={challenge.categoria}
               ></div>
             </div>
 
             {/* Title and Description */}
             <div className="space-y-2">
               <h3 className="font-bold text-gray-800 text-lg group-hover:text-blue-600 transition-colors duration-300 line-clamp-1">
-                {challenge.title}
+                {challenge.titulo}
               </h3>
               <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
-                {challenge.description}
+                {challenge.descricao}
               </p>
             </div>
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1">
-              {challenge.tags.slice(0, 3).map((tag, index) => (
+              {challenge.tags?.slice(0, 3).map((tag, index) => (
                 <Badge
                   key={index}
                   variant="secondary"
@@ -201,7 +144,7 @@ export default function ChallengeGrid() {
                   {tag}
                 </Badge>
               ))}
-              {challenge.tags.length > 3 && (
+              {challenge.tags && challenge.tags.length > 3 && (
                 <Badge
                   variant="secondary"
                   className="text-xs bg-gray-100 text-gray-700"
@@ -219,7 +162,7 @@ export default function ChallengeGrid() {
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Zap className="w-4 h-4 text-blue-500" />
                   <span className="font-bold text-blue-600">
-                    +{challenge.xp}
+                    +{challenge.pontos}
                   </span>
                 </div>
                 <div className="text-xs text-gray-600">XP Reward</div>
@@ -228,7 +171,7 @@ export default function ChallengeGrid() {
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Clock className="w-4 h-4 text-green-500" />
                   <span className="font-bold text-green-600">
-                    {challenge.estimatedTime}
+                    {challenge.tempoEstimado} min
                   </span>
                 </div>
                 <div className="text-xs text-gray-600">Tempo Est.</div>
@@ -238,35 +181,33 @@ export default function ChallengeGrid() {
             {/* Difficulty and Language */}
             <div className="flex gap-2">
               <Badge
-                className={`border ${getDifficultyColor(challenge.difficulty)}`}
+                className={`border ${getDifficultyColor(
+                  challenge.dificuldade
+                )}`}
               >
-                {challenge.difficulty}
+                {challenge.dificuldade}
               </Badge>
-              <Badge className={getLanguageColor(challenge.language)}>
-                {challenge.language}
+              <Badge className={getLanguageColor(challenge.linguagem)}>
+                {challenge.linguagem}
               </Badge>
             </div>
 
             {/* Completion Rate */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Taxa de Sucesso</span>
+                <span className="text-gray-600">Progresso</span>
                 <span className="font-semibold">
-                  {challenge.completionRate}%
+                  {challenge.taxaConclusao ?? 0}%
                 </span>
               </div>
-              <Progress value={challenge.completionRate} className="h-2" />
+              <Progress value={challenge.taxaConclusao ?? 0} className="h-2" />
             </div>
 
             {/* Stats */}
             <div className="flex items-center justify-between text-sm text-gray-600">
               <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <span>{challenge.participants.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-1">
                 <Target className="w-4 h-4" />
-                <span>{challenge.category}</span>
+                <span>{challenge.categoria}</span>
               </div>
             </div>
 
