@@ -9,6 +9,6 @@ import mindpatch.backend.model.Tarefa;
 
 @Repository
 public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
-    List<Tarefa> findByDesafioId(Long desafioId);
+    List<Tarefa> findByChallenge_Id(Long challengeId);
 }
 
