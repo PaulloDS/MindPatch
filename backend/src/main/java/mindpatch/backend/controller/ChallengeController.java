@@ -24,6 +24,11 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
 
+    @GetMapping
+    public ResponseEntity<List<ChallengeResponseDTO>> listarDesafios(@RequestParam(required = false) Long userId) {
+        return ResponseEntity.ok(challengeService.listarChallenges(userId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ChallengeResponseDTO> getDesafio(@PathVariable Long id, @RequestParam(required = false) Long userId) {
         return ResponseEntity.ok(challengeService.getDesafio(id, userId));
