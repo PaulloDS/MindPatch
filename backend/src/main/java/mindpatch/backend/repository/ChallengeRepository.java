@@ -10,7 +10,7 @@ import mindpatch.backend.model.Challenge;
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long>{
 
-    List<Challenge> findByTagsContaining(String tagsDesafio);
+    List<Challenge> findByTagsDesafio(String tagsDesafio);
     List<Challenge> findByDificuldade(String dificuldade);
 
 }
