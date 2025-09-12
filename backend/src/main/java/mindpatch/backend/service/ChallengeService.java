@@ -1,7 +1,9 @@
 package mindpatch.backend.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,28 @@ public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
+
+    public List<ChallengeResponseDTO> listarChallenges(Long userId) {
+        List<Challenge> challenges = challengeRepository.findAll();
+
+        if (userId == null) {
+            return challenges.stream()
+                    .map(c -> ChallengeResponseDTO.fromEntity(c, null))
+                    .toList();
+        }
+
+        Map<Long, UserChallenge> userChallengeMap = userChallengeRepository
+                .findByUserId(userId)
+                .stream()
+                .collect(Collectors.toMap(
+                        uc -> uc.getChallenge().getId(),
+                        uc -> uc
+                ));
+
+        return challenges.stream()
+                .map(c -> ChallengeResponseDTO.fromEntity(c, userChallengeMap.get(c.getId())))
+                .toList();
+    }
 
     public ChallengeResponseDTO getDesafio(Long id, Long userId) {
         Challenge challenge = challengeRepository.findById(id)
@@ -42,5 +66,6 @@ public class ChallengeService {
                 .build();
         return challengeRepository.save(challenge);
     }
+
 
 }
