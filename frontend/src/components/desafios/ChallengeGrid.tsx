@@ -30,7 +30,7 @@ export default function ChallengeGrid() {
   useEffect(() => {
     async function fetchChallenges() {
       try {
-        const userId = 1;
+        const userId = localStorage.getItem("userId"); // ou vindo do Auth.js/Clerk
         const res = await fetch(`/challenges?userId=${userId}`);
         const data = await res.json();
         setChallenges(data);
