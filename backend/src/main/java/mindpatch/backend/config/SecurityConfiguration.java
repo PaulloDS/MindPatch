@@ -51,7 +51,9 @@ public class SecurityConfiguration {
         "/bades/usuario/{userId}",
         "/patches/{patchId}/comments",
         "/comments/{id}",
-        "/challenges"
+        "/challenges",
+        "/challenges/{id}",
+        "/challenges/search"
     };
 
     public static final String[] ENDPOINTS_ADMIN = {
