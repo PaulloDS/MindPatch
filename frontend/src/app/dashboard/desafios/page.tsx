@@ -14,7 +14,7 @@ export default function ChallengesPage() {
           <p className="text-gray-600">
             Resolva desafios e aprimore suas habilidades de programação.
           </p>
-        </div>
+        </div> 
       </div>
 
       {/* Challenge Stats */}
