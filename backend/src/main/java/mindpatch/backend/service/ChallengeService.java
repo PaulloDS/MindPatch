@@ -22,33 +22,28 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
 
-    public List<ChallengeResponseDTO> listarChallenges(Long userId) {
-        List<Challenge> challenges = challengeRepository.findAll();
+    // Todos os desafios
+    public List<ChallengeResponseDTO> listarTodos() {
+        return challengeRepository.findAll().stream()
+                .map(c -> ChallengeResponseDTO.fromEntity(c, null))
+                .toList();
+    }
 
-        if (userId == null) {
-            return challenges.stream()
-                    .map(c -> ChallengeResponseDTO.fromEntity(c, null))
-                    .toList();
-        }
+    // Desafios do usuário
+    public List<ChallengeResponseDTO> listarPorUsuario(Long userId) {
+        List<UserChallenge> userChallenges = userChallengeRepository.findByUserId(userId);
 
-        Map<Long, UserChallenge> userChallengeMap = userChallengeRepository
-                .findByUserId(userId)
-                .stream()
-                .collect(Collectors.toMap(
-                        uc -> uc.getChallenge().getId(),
-                        uc -> uc
-                ));
-
-        return challenges.stream()
-                .map(c -> ChallengeResponseDTO.fromEntity(c, userChallengeMap.get(c.getId())))
+        return userChallenges.stream()
+                .map(uc -> ChallengeResponseDTO.fromEntity(uc.getChallenge(), uc))
                 .toList();
     }
 
     public ChallengeResponseDTO getDesafio(Long id, Long userId) {
         Challenge challenge = challengeRepository.findById(id)
-                            .orElseThrow(() -> new RuntimeException("Desafio não encontrado!"));
+                .orElseThrow(() -> new RuntimeException("Desafio não encontrado!"));
 
-        UserChallenge userChallenge = userId != null ? userChallengeRepository.findByUserIdAndChallengeId(userId, id).orElse(null)
+        UserChallenge userChallenge = userId != null
+                ? userChallengeRepository.findByUserIdAndChallengeId(userId, id).orElse(null)
                 : null;
 
         return ChallengeResponseDTO.fromEntity(challenge, userChallenge);
@@ -64,8 +59,7 @@ public class ChallengeService {
                 .tempoEstimado(dto.tempoEstimado())
                 .tagsDesafio(dto.tags())
                 .build();
+
         return challengeRepository.save(challenge);
     }
-
-
 }
