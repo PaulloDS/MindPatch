@@ -52,6 +52,7 @@ public class SecurityConfiguration {
         "/patches/{patchId}/comments",
         "/comments/{id}",
         "/challenges",
+        "/challenges/user/{userId}",
         "/challenges/{id}",
         "/challenges/search"
     };
