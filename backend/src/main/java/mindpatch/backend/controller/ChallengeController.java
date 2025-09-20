@@ -24,13 +24,21 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
 
+    // Todos os desafios disponíveis
     @GetMapping
-    public ResponseEntity<List<ChallengeResponseDTO>> listarDesafios(@RequestParam(required = false) Long userId) {
-        return ResponseEntity.ok(challengeService.listarChallenges(userId));
+    public ResponseEntity<List<ChallengeResponseDTO>> listarTodos() {
+        return ResponseEntity.ok(challengeService.listarTodos());
     }
 
-    @GetMapping("/{id:[0-9]+}")
-    public ResponseEntity<ChallengeResponseDTO> getDesafio(@PathVariable("id") Long id, @RequestParam(required = false) Long userId) {
+    // Desafios do usuário (ativos/concluídos)
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ChallengeResponseDTO>> listarPorUsuario(@PathVariable Long userId) {
+        return ResponseEntity.ok(challengeService.listarPorUsuario(userId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ChallengeResponseDTO> getDesafio(@PathVariable Long id, 
+                                                           @RequestParam(required = false) Long userId) {
         return ResponseEntity.ok(challengeService.getDesafio(id, userId));
     } 
 
@@ -39,7 +47,7 @@ public class ChallengeController {
         return ResponseEntity.ok(challengeService.criarChallenge(dto));
     }
 
-    
+    /* 
     @GetMapping("/search")
     public ResponseEntity<List<Challenge>> buscarPorTags(
             @RequestParam List<String> tags,
@@ -49,5 +57,6 @@ public class ChallengeController {
         List<Challenge> resultados = challengeService.buscarPorTags(tags, todas);
         return ResponseEntity.ok(resultados);
     }
+    */
 
 }
