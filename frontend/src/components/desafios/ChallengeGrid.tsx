@@ -30,29 +30,36 @@ export default function ChallengeGrid() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("all");
 
-  async function fetchChallenges(selectedTab: Tab) {
-    try {
-      setLoading(true);
-      const userId = localStorage.getItem("userId");
-
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/challenges`;
-      if (selectedTab === "user" && userId) {
-        url = `chalenges/user/${userId}`;
-      }
-
-      const res = await fetch(url);
-      const data = await res.json();
-      setChallenges(data);
-    } catch (error) {
-      console.error("Erro ao buscar desafios: ", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchChallenges(tab);
-  }, [tab]);
+    async function fetchChallenges() {
+      try {
+        const userId = sessionStorage.getItem("userId");
+
+        const res = await fetch(
+          `http://localhost:8080/challenges?userId=${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include", // 🔑 faz o cookie ser enviado
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Erro HTTP: ${res.status}`);
+        }
+
+        const data = await res.json();
+        setChallenges(data);
+      } catch (err) {
+        console.error("Erro ao buscar desafios: ", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchChallenges();
+  }, []);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
