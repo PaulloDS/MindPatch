@@ -61,6 +61,50 @@ export default function ChallengeGrid() {
     fetchChallenges();
   }, []);
 
+  async function handleResolver(challengeId: number) {
+    try {
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) {
+        alert("É necessário realizar o login!");
+        return;
+      }
+
+      const res = await fetch(
+        `http://localhost:8080/challenges/${challengeId}/resolver?userId=${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Erro ao atribuir desafio!");
+      }
+
+      const data = await res.json();
+      console.log("Desafio atribuído: ", data);
+
+      // Atualiza a lista de desafios (para refletir progresso/status atualizados)
+      setChallenges((prev) =>
+        prev.map((ch) =>
+          ch.id === challengeId
+            ? {
+                ...ch,
+                status: "EM_ANDAMENTO",
+                taxaConclusao: data.taxaConclusao,
+              }
+            : ch
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Falha ao atribuir desafio.");
+    }
+  }
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Fácil":
@@ -253,7 +297,7 @@ export default function ChallengeGrid() {
                   </div>
                 </div>
 
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group-hover:shadow-xl">
+                <Button onClick={() => handleResolver(challenge.id)} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group-hover:shadow-xl">
                   <Code className="w-4 h-4 mr-2" />
                   Resolver Desafio
                 </Button>
