@@ -1,9 +1,7 @@
 package mindpatch.backend.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import mindpatch.backend.dto.ChallengeRequestDTO;
 import mindpatch.backend.dto.ChallengeResponseDTO;
 import mindpatch.backend.model.Challenge;
+import mindpatch.backend.model.StatusChallenge;
+import mindpatch.backend.model.User;
 import mindpatch.backend.model.UserChallenge;
 import mindpatch.backend.repository.ChallengeRepository;
 import mindpatch.backend.repository.UserChallengeRepository;
@@ -21,6 +21,7 @@ public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
+    
 
     // Todos os desafios
     public List<ChallengeResponseDTO> listarTodos() {
@@ -61,5 +62,27 @@ public class ChallengeService {
                 .build();
 
         return challengeRepository.save(challenge);
+    }
+
+    public UserChallenge atribuirDesafio(Long userId, Long challengeId) {
+        Optional<UserChallenge> existente = userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId);
+        if (existente.isPresent()) {
+            return existente.get();
+        }
+
+        Challenge challenge = challengeRepository.findById(challengeId)
+                    .orElseThrow(() -> new RuntimeException("Desafio não encontrado!"));
+        
+        User user = new User();
+        user.setId(userId);
+
+        UserChallenge userChallenge = UserChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .status(StatusChallenge.PENDENTE)
+                .taxaConclusao(0.0)
+                .build();
+
+        return userChallengeRepository.save(userChallenge);
     }
 }
