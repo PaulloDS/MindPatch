@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import mindpatch.backend.dto.ChallengeRequestDTO;
 import mindpatch.backend.dto.ChallengeResponseDTO;
+import mindpatch.backend.dto.UserChallengeDTO;
 import mindpatch.backend.model.Challenge;
+import mindpatch.backend.model.UserChallenge;
 import mindpatch.backend.service.ChallengeService;
 
 @RestController
@@ -58,5 +60,23 @@ public class ChallengeController {
         return ResponseEntity.ok(resultados);
     }
     */
+
+    @PostMapping("/{challengeId}/resolver")
+    public ResponseEntity<UserChallengeDTO> resolverDesafio(
+        @PathVariable Long challengeId,
+        @RequestParam Long userId
+    ) {
+        UserChallenge userChallenge = challengeService.atribuirDesafio(userId, challengeId);
+
+        UserChallengeDTO dto = new UserChallengeDTO(
+            userChallenge.getId(),
+            userChallenge.getUser().getId(),
+            userChallenge.getChallenge().getId(),
+            userChallenge.getStatus().name(),
+            userChallenge.getTaxaConclusao()
+        );
+
+        return ResponseEntity.ok(dto);
+    }
 
 }
