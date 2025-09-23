@@ -54,7 +54,8 @@ public class SecurityConfiguration {
         "/challenges",
         "/challenges/user/{userId}",
         "/challenges/{id}",
-        "/challenges/search"
+        "/challenges/search",
+        "/challenges/{challengeId}/resolver"
     };
 
     public static final String[] ENDPOINTS_ADMIN = {
