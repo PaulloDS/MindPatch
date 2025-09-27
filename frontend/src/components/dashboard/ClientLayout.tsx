@@ -9,6 +9,7 @@ import { CreatePatche } from "../patches/CreatePatche";
 import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { CreateChallenge } from "../desafios/CreateChallenge";
 
 type Patch = {
   id: number;
@@ -79,9 +80,7 @@ export default function ClientLayout({
             />
           </div>
           <div className="flex items-center space-x-5">
-            <Button className="py-5 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 hover:bg-emerald-200 hover:scale-110 transition-transform duration-300 hover:cursor-pointer">
-              ➕ Novo Desafio
-            </Button>
+            <CreateChallenge onCreated={fetchPatches} />
             <CreatePatche onCreated={fetchPatches} />
             <Button className="bg-blue-400 w-[40px] rounded-full hover:bg-gray-500 hover:cursor-pointer">
               🔔
