@@ -44,16 +44,18 @@ export function CreateChallenge({ onCreated }: Props) {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await api.post(
-        "/challenges",
-        {
-          ...form,
-          pontos: Number(form.pontos),
-          tempoEstimado: Number(form.tempoEstimado),
-          tagsDesafio: form.tags.split(",").map((t) => t.trim),
-        },
-        { withCredentials: true }
-      );
+
+      const payload = {
+        titulo: form.titulo,
+        descricao: form.descricao,
+        pontos: Number(form.pontos),
+        dificuldade: form.dificuldade,
+        linguagem: form.linguagem,
+        tempoEstimado: Number(form.tempoEstimado),
+        tagsDesafio: form.tags.split(",").map((t) => t.trim),
+      };
+
+      await api.post("/challenges", payload, { withCredentials: true });
 
       toast.success("Desafio criado com sucesso!");
       setOpen(false);
