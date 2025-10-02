@@ -10,7 +10,8 @@ public record ChallengeRequestDTO(
     String dificuldade,
     String linguagem,
     Integer tempoEstimado,
-    List<String> tags
+    List<String> tagsDesafio,
+    List<TarefaRequestDTO> tarefas
 
 ) {
 
