@@ -6,20 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import mindpatch.backend.model.Tarefa;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TarefaResponseDTO {
-    private Long id;
-    private String descricao;
-    private Boolean concluida;
+public record TarefaResponseDTO (
+    Long id,
+    String descricao,
+    String entradaExemplo,
+    String saidaEsperada
+) {
 
     public static TarefaResponseDTO fromEntity(Tarefa tarefa) {
-        return TarefaResponseDTO.builder()
-                .id(tarefa.getId())
-                .descricao(tarefa.getDescricao())
-                .concluida(tarefa.getConcluida())
-                .build();
+        return new TarefaResponseDTO(tarefa.getId(), tarefa.getDescricao(),  tarefa.getEntradaExemplo(), tarefa.getSaidaEsperada());
     }
 }
