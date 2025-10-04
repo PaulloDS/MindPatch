@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mindpatch.backend.model.Challenge;
+import mindpatch.backend.model.StatusChallenge;
 import mindpatch.backend.model.Tarefa;
 import mindpatch.backend.model.UserChallenge;
 
@@ -46,14 +47,14 @@ public class ChallengeResponseDTO {
                 .dificuldade(challenge.getDificuldade())
                 .linguagem(challenge.getLinguagem())
                 .tempoEstimado(challenge.getTempoEstimado())
-                .tags(challenge.getTagsDesafio())
+                .tagsDesafio(challenge.getTagsDesafio())
                 .tarefas(challenge.getTarefas() != null
                         ? challenge.getTarefas().stream()
-                            .map(TarefaResponseDTO::fromEntity)
-                            .collect(Collectors.toList())
-                        : null)
-                .status(userChallenge != null ? userChallenge.getStatus().name() : null)
-                .taxaConclusao(userChallenge != null ? userChallenge.getTaxaConclusao() : null)
+                                .map(TarefaResponseDTO::fromEntity)
+                                .toList()
+                        : List.of())
+                .status(userChallenge != null ? userChallenge.getStatus().name() : StatusChallenge.NAO_INICIADO.name())
+                .taxaConclusao(userChallenge != null ? userChallenge.getTaxaConclusao() : 0.0)
                 .build();
     }
 }
