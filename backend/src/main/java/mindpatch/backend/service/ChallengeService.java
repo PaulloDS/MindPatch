@@ -10,6 +10,7 @@ import mindpatch.backend.dto.ChallengeRequestDTO;
 import mindpatch.backend.dto.ChallengeResponseDTO;
 import mindpatch.backend.model.Challenge;
 import mindpatch.backend.model.StatusChallenge;
+import mindpatch.backend.model.Tarefa;
 import mindpatch.backend.model.User;
 import mindpatch.backend.model.UserChallenge;
 import mindpatch.backend.repository.ChallengeRepository;
@@ -58,8 +59,21 @@ public class ChallengeService {
                 .dificuldade(dto.dificuldade())
                 .linguagem(dto.linguagem())
                 .tempoEstimado(dto.tempoEstimado())
-                .tagsDesafio(dto.tags())
+                .tagsDesafio(dto.tagsDesafio())
                 .build();
+
+        if (dto.tarefas() != null && !dto.tarefas().isEmpty()) {
+            List<Tarefa> tarefas = dto.tarefas().stream()
+                .map(t -> Tarefa.builder()
+                        .descricao(t.descricao())
+                        .entradaExemplo(t.entradaExemplo())
+                        .saidaEsperada(t.saidaEsperada())
+                        .challenge(challenge)
+                        .build())
+                .toList();
+            
+            challenge.setTarefas(tarefas);
+        }
 
         return challengeRepository.save(challenge);
     }
