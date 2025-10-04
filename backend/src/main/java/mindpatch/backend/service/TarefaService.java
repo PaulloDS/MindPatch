@@ -21,8 +21,7 @@ public class TarefaService {
     public void atualizarStatusTarefa(Long tarefaId, TarefaUpdateDTO dto, Long userId) {
         Tarefa tarefa = tarefaRepository.findById(tarefaId)
                     .orElseThrow(() -> new RuntimeException("Tarefa não encontrada!"));
-        
-        tarefa.setConcluida(dto.concluida());
+
         tarefaRepository.save(tarefa);
 
         // Atualiza progresso do desafio para o usuário
