@@ -54,11 +54,6 @@ public class UserChallenge {
             return;
         }
 
-        long concluidas = challenge.getTarefas().stream()
-                        .filter(Tarefa::isConcluida)
-                        .count();
-        this.taxaConclusao = (concluidas * 100.0) / challenge.getTarefas().size();
-
         if (this.taxaConclusao == 100.0) {
             this.status = StatusChallenge.CONCLUIDO;
             this.dataConclusao = LocalDateTime.now();
