@@ -1,4 +1,5 @@
 package mindpatch.backend.model;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,9 +28,12 @@ public class Tarefa {
 
     private String titulo;
 
+    @Column(nullable = false)
     private String descricao;
 
-    private boolean concluida = false;
+    private String entradaExemplo;
+
+    private String saidaEsperada;
 
     @ManyToOne
     @JoinColumn(name = "challenge_id")
